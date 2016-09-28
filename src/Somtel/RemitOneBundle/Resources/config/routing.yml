@@ -1,0 +1,15 @@
+auth:
+    type:     rest
+    resource: Somtel\RemitOneBundle\Controller\AuthController
+
+beneficiary:
+    type:     rest
+    resource: Somtel\RemitOneBundle\Controller\BeneficiaryController
+
+transaction:
+    type:     rest
+    resource: Somtel\RemitOneBundle\Controller\TransactionController
+
+options:
+    type:     rest
+    resource: Somtel\RemitOneBundle\Controller\OptionsController

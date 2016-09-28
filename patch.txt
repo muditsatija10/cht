@@ -1,0 +1,27 @@
+diff --git a/app/config/services.yml b/app/config/services.yml
+index d9a3228..5d02dd5 100644
+--- a/app/config/services.yml
++++ b/app/config/services.yml
+@@ -15,3 +15,7 @@ services:
+     R1API:
+         class: AppBundle\Util\ROneAPI
+         arguments: ['@doctrine.orm.entity_manager']
++
++    app.sis-plus-request:
++        class: AppBundle\Util\SisPlusRequest
++        arguments: ['@doctrine.orm.entity_manager']
+\ No newline at end of file
+diff --git a/src/ITG/MillBundle b/src/ITG/MillBundle
+index 7aeeb19..eca9526 160000
+--- a/src/ITG/MillBundle
++++ b/src/ITG/MillBundle
+@@ -1 +1 @@
+-Subproject commit 7aeeb19ca6cc796a12fd323a11be1031aa2caf0a
++Subproject commit eca9526929b2fe025b455ebd128cf5478a1158be
+diff --git a/src/ITG/UserBundle b/src/ITG/UserBundle
+index 9f468e1..55410aa 160000
+--- a/src/ITG/UserBundle
++++ b/src/ITG/UserBundle
+@@ -1 +1 @@
+-Subproject commit 9f468e10c700ce1de5c0613a8a4262d175ecb2ca
++Subproject commit 55410aa6c81d87e7d2a696e149664096f641bb3b

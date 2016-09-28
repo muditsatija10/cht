@@ -1,0 +1,22 @@
+services:
+
+    itg_jumio.http_client:
+        class: 'GuzzleHttp\Client'
+
+    itg_jumio.service:
+        class: ITG\JumioBundle\Util\JumioService
+        arguments:
+            - "%itg_jumio%"
+            - "@itg_jumio.http_client"
+
+    #itg_jumio.netverify.request.changed.event:
+    #    class: ITG\JumioBundle\Event\NetverifyRequestChangeEvent
+
+    itg_jumio.netverify.request.changed.listener:
+        class: ITG\JumioBundle\EventListener\NetverifyRequestChangeListener
+        arguments:
+            - "@itg_jumio.service"
+            - "%kernel.root_dir%"
+            - "@doctrine.orm.entity_manager"
+        tags:
+            - { name: kernel.event_listener, event: jumio.netverify.request.changed, method: 'onChange' }

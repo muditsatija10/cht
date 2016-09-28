@@ -1,0 +1,10 @@
+imports:
+    - { resource: "@ITGMillBundle/Resources/config/roles.yml" }
+    - { resource: "@ITGUserBundle/Resources/config/roles.yml" }
+    - { resource: "@ITGLogBundle/Resources/config/roles.yml" }
+
+itg_user:
+    roles:
+        - "PROJ_SOMETHING_LIST_SOMETHINGS"
+        - "PROJ_SOMETHING_EDIT_SOMETHINGS"
+        - "PROJ_SOMETHING_DELETE_SOMETHINGS"

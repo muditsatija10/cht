@@ -1,0 +1,3 @@
+itg_user:
+    roles:
+        - "ITG_LOG_LIST_LOGS"

@@ -1,0 +1,3 @@
+cashin:
+    type: rest
+    resource: Somtel\PipBundle\Controller\CashinController

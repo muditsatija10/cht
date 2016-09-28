@@ -1,0 +1,23 @@
+services:
+  # Listeners
+  somtel_pip.event.response_listener:
+    class: 'Somtel\PipBundle\EventListener\ResponseListener'
+    arguments:
+      - "@itg_log.log_service"
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+      - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+  somtel_pip.event.serialization_listener:
+    class: 'Somtel\PipBundle\EventListener\SerializationListener'
+    arguments:
+      - "@somtel_pip.util"
+    tags:
+      - { name: jms_serializer.event_listener, event: serializer.post_serialize, method: onSerialize, class: 'Somtel\PipBundle\Entity\PipCashinOrder' }
+
+  somtel_pip.event.order_status_listener:
+    class: 'Somtel\PipBundle\EventListener\OrderStatusChangeListener'
+    arguments:
+      - "@doctrine.orm.entity_manager"
+    tags:
+      - { name: kernel.event_listener, event: pip.status_changed, method: 'onStatusChange' }

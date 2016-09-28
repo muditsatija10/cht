@@ -1,0 +1,15 @@
+login:
+    type:     rest
+    resource: ITG\UserBundle\Controller\LoginController
+
+users:
+    type:     rest
+    resource: ITG\UserBundle\Controller\UserController
+
+role_sets:
+    type:     rest
+    resource: ITG\UserBundle\Controller\RoleSetController
+
+registration:
+    type:     rest
+    resource: ITG\UserBundle\Controller\RegistrationController

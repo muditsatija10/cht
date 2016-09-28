@@ -1,0 +1,8 @@
+jumio:
+    type:     rest
+    resource: ITG\JumioBundle\Controller\JumioController
+
+photo:
+    type:     rest
+    resource: ITG\JumioBundle\Controller\PhotoController
+    prefix:   /photo

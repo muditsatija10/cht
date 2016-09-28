@@ -1,0 +1,7 @@
+itg_user:
+    roles:
+        - "ITG_USER_LIST_USERS"
+        - "ITG_USER_EDIT_USERS"
+        - "ITG_USER_DELETE_USERS"
+
+        - "ITG_USER_EDIT_ROLES"

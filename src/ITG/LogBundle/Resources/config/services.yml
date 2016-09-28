@@ -1,0 +1,4 @@
+services:
+    itg_log.log_service:
+        class: ITG\LogBundle\Util\LogService
+        arguments: ["@doctrine.orm.default_entity_manager", "@service_container"]

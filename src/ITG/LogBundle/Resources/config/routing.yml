@@ -1,0 +1,3 @@
+log:
+    type:     rest
+    resource: ITG\LogBundle\Controller\LogController

@@ -1,0 +1,9 @@
+services:
+    wora_pay.card:
+        class: Somtel\WoraPayBundle\Service\CardService
+        arguments: ["@doctrine.orm.entity_manager"]
+    security.auth.card_token_voter:
+        class: Somtel\WoraPayBundle\Security\CardTokenVoter
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: security.voter }

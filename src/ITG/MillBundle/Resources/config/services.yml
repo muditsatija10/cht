@@ -1,0 +1,26 @@
+services:
+#    itg_mill.example:
+#        class: ITG\MillBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]
+
+    itg_mill.util.noop_inflector:
+        class: ITG\MillBundle\Util\Inflector\NoopInflector
+
+    itg_mill.exception_wrapper_handler:
+        class: ITG\MillBundle\Util\ExceptionWrapperHandler
+
+    itg_mill.token_authenticator:
+        class: ITG\MillBundle\Security\TokenAuthenticator
+        arguments: ['@doctrine.orm.entity_manager']
+        public: false
+
+    itg_mill.guid_generator:
+        class: ITG\MillBundle\Security\GuidGenerator
+
+    itg_mill.token_user_provider:
+        class: ITG\MillBundle\Security\TokenUserProvider
+        arguments: ['@doctrine.orm.entity_manager']
+
+    itg_mill.file_upload_handler:
+        class: ITG\MillBundle\Util\FileUploadHandler
+        arguments: ['@service_container']

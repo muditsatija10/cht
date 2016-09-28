@@ -1,0 +1,21 @@
+Somtel\PipBundle\Entity\PipCashinOrder:
+  invalid_order:
+    vendorName: '<username()>'
+
+  valid_order:
+    vendorName: 'will_be_set_in_setUp'
+    vendorOrderReference: 'user_id<randomDigit()>'
+    orderValue: '<randomFloat(3, 0, 8999)>'
+    orderCurrencyCode: 'EUR'
+    customerEmail: 'ez@canarius.net'
+    customerName: '<firstName()> <lastName()>'
+
+  signed_order:
+    vendorName: "egidijus"
+    orderValue: "1000"
+    orderCurrencyCode: "EUR"
+    customerEmail: "ez@canarius.net"
+    signature: "6d5e4be2f7e8d60585259f211219a0cb979debae"
+    vendorOrderReference: "user_id"
+    customerMobileNumber: "+37012345678"
+

@@ -1,0 +1,35 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+
+    encoders:
+        AppBundle\Entity\User: bcrypt
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        in_memory:
+            memory: ~
+
+        token_user_provider:
+            id: itg_mill.token_user_provider
+
+        user_db:
+            entity:
+                class: AppBundle:User
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern: ^/(public|login|doc)
+            anonymous: ~
+
+        secure:
+            pattern: ^/
+            stateless: true
+            simple_preauth:
+                authenticator: itg_mill.token_authenticator
+            provider: token_user_provider

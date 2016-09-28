@@ -1,0 +1,36 @@
+wora_pay:
+    prefix:   /
+    type: rest
+    resource: "@WoraPayBundle/Resources/config/routing.yml"
+
+r1:
+    prefix: '/r1'
+    type: rest
+    resource: "@RemitOneBundle/Resources/config/routing.yml"
+itg_jumio:
+    resource: "@ITGJumioBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /jumio
+
+pip_routes:
+    prefix: '/pip'
+    type: rest
+    resource: "@SomtelPipBundle/Resources/config/routing.yml"
+
+itg_user:
+    resource: "@ITGUserBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /
+
+itg_log:
+    resource: "@ITGLogBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /doc
+
+api:
+    type:     rest
+    resource: "api_routes.yml"

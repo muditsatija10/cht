@@ -1,0 +1,40 @@
+services:
+  r1.http_client_transporter:
+    class: 'GuzzleHttp\Client'
+    arguments:
+      - {"base_uri": '%r1_api_endpoint%', "cookies": true, "http_errors": false, "allow_redirect": false}
+    public: false
+  r1.http_client:
+    class: 'Somtel\RemitOneBundle\Client\Http'
+    arguments:
+      - '@r1.http_client_transporter'
+      - '@r1.decoder'
+      - '@r1.encrypter'
+      - '@r1.payloadFactory'
+      - '@logger'
+  r1.payloadFactory:
+    class: 'Somtel\RemitOneBundle\Payload\Factory\BaseFactory'
+  r1.requestsPayloadFactory:
+    class: 'Somtel\RemitOneBundle\Payload\Factory\RequestPayloadFactory'
+  r1.decoder:
+    class: 'Somtel\RemitOneBundle\Service\Decoder'
+  r1.encrypter:
+    class: 'Somtel\RemitOneBundle\Service\Encrypter'
+    arguments:
+      - '%r1_public_key_filepath%'
+  r1.remitter_service:
+    class: 'Somtel\RemitOneBundle\Service\RemitterService'
+    arguments:
+      - '@r1.http_client'
+      - '@r1.currencies'
+      - '@r1.requestsPayloadFactory'
+  r1.currencies_internal:
+    class: 'Alcohol\ISO4217'
+    public: false
+  r1.currencies:
+    class: 'Somtel\RemitOneBundle\Service\CurrencyService'
+    arguments:
+      - '@r1.currencies_internal'
+  log:
+    class: Somtel\RemitOneBundle\Service\LogService
+    arguments: ['@doctrine.orm.entity_manager']

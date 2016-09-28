@@ -1,0 +1,36 @@
+services:
+
+  somtel_pip.http_client:
+    class: 'GuzzleHttp\Client'
+    arguments:
+      - {"base_uri": '%pip_api_endpoint%', "cookies": true, "http_errors": false, "allow_redirect": false}
+
+  somtel_pip.transporter:
+    class: 'Somtel\PipBundle\Service\Transporter'
+    arguments:
+      - "@somtel_pip.http_client"
+      - "%pip_merchant_username%"
+      - "%pip_merchant_password%"
+
+  somtel_pip.util:
+    class: 'Somtel\PipBundle\Service\Util'
+    arguments:
+      - "@service_container"
+
+  somtel_pip.cashin_facade:
+    class: 'Somtel\PipBundle\Service\CashinFacade'
+    arguments:
+      - "@somtel_pip.transporter"
+      - "@doctrine.orm.entity_manager"
+      - "@somtel_pip.util"
+      - "@event_dispatcher"
+
+  somtel_pip.cashin_controller:
+    class: 'Somtel\PipBundle\Controller\CashinController'
+    arguments:
+      - "@somtel_pip.cashin_facade"
+      - "@service_container"
+
+
+imports:
+  - { resource: 'listeners.yml' }
