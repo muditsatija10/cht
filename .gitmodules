@@ -1,0 +1,12 @@
+[submodule "MillBundle"]
+	path = src/ITG/MillBundle
+	url = git@bitbucket.org:itgirnos/millbundle.git
+[submodule "UserBundle"]
+	path = src/ITG/UserBundle
+	url = git@bitbucket.org:itgirnos/userbundle.git
+[submodule "ApiDocBundle"]
+	path = src/ITG/ApiDocBundle
+	url = git@bitbucket.org:itgirnos/apidocbundle.git
+[submodule "LogBundle"]
+	path = src/ITG/LogBundle
+	url = git@bitbucket.org:itgirnos/logbundle.git
