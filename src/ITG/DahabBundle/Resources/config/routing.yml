@@ -1,0 +1,3 @@
+customer:
+    type:     rest
+    resource: ITG\DahabBundle\Controller\DahabController
