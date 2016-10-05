@@ -2,9 +2,9 @@
 
 namespace ITG\DahabBundle;
 
-use ITG\MillBundle\Component\MillBundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ITGDahabBundle extends MillBundle
+class ITGDahabBundle extends Bundle
 {
     protected $version = '0.1.0';
 }

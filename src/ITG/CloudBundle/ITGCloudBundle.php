@@ -2,9 +2,9 @@
 
 namespace ITG\CloudBundle;
 
-use ITG\MillBundle\Component\MillBundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ITGCloudBundle extends MillBundle
+class ITGCloudBundle extends Bundle
 {
     protected $version = '0.1.0';
 }
