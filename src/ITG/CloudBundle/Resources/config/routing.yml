@@ -1,0 +1,3 @@
+cloud:
+    type:     rest
+    resource: ITG\CloudBundle\Controller\CloudController

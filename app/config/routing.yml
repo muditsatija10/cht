@@ -35,7 +35,3 @@ api:
     type:     rest
     resource: "api_routes.yml"
 
-itg_dahab:
-    resource: "@ITGDahabBundle/Resources/config/routing.yml"
-    type:     rest
-    prefix:   /

@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new ITG\MillBundle\ITGMillBundle(),
             new ITG\UserBundle\ITGUserBundle(),
+            new ITG\CloudBundle\ITGCloudBundle(),
             new ITG\DahabBundle\ITGDahabBundle(),
             new ITG\ApiDocBundle\ITGApiDocBundle(),
             new ITG\LogBundle\ITGLogBundle(),
