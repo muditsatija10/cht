@@ -10,12 +10,14 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 
 class DahabController extends BaseController
 {
 
 	/**
+	 * @ApiDoc()
      * @Post("/customer")
      */
 

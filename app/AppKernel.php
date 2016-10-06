@@ -22,14 +22,14 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new ITG\MillBundle\ITGMillBundle(),
             new ITG\UserBundle\ITGUserBundle(),
-            new ITG\CloudBundle\ITGCloudBundle(),
-            new ITG\DahabBundle\ITGDahabBundle(),
             new ITG\ApiDocBundle\ITGApiDocBundle(),
             new ITG\LogBundle\ITGLogBundle(),
             new Somtel\PipBundle\SomtelPipBundle(),
             new Somtel\RemitOneBundle\RemitOneBundle(),
             new Somtel\WoraPayBundle\WoraPayBundle(),
             new ITG\JumioBundle\ITGJumioBundle(),
+            new ITG\DahabBundle\ITGDahabBundle(),
+            new ITG\CloudBundle\ITGCloudBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

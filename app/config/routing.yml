@@ -7,6 +7,7 @@ r1:
     prefix: '/r1'
     type: rest
     resource: "@RemitOneBundle/Resources/config/routing.yml"
+
 itg_jumio:
     resource: "@ITGJumioBundle/Resources/config/routing.yml"
     type:     rest
@@ -34,4 +35,13 @@ NelmioApiDocBundle:
 api:
     type:     rest
     resource: "api_routes.yml"
+
+itg_dahab:
+    type:   rest
+    resource: "@ITGDahabBundle/Resources/config/routing.yml"
+
+itg_cloud:
+    type:   rest
+    resource: "@ITGCloudBundle/Resources/config/routing.yml"
+
 
