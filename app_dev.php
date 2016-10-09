@@ -12,7 +12,7 @@ umask(0000);
 // Feel free to remove this, extend it, or make something more sophisticated.
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-    || !(in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1', 'localhost', '84.15.189.248', '77.240.250.116']) || php_sapi_name() === 'cli-server' || strpos(@$_SERVER['REMOTE_ADDR'], '192.168') !== false)
+    || !(in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1', 'localhost', '52.27.255.66', '77.240.250.116']) || php_sapi_name() === 'cli-server' || strpos(@$_SERVER['REMOTE_ADDR'], '192.168') !== false)
 ) {
     header('HTTP/1.0 403 Forbidden');
     exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
