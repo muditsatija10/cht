@@ -235,33 +235,36 @@ class AuthController extends BaseController
     {
         $type = 'quick-Register';
         $param = $request->request->all();
+
         $r1Service = $this->get('r1.remitter_service');
 
         $form = $this->createPostForm(createRemitterType::class);
         $form->handleRequest($request);
-
+         
         if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
         }
-        $path = '/home/rishabhbansal/Desktop/imgpsh_fullsize.jpg';
+        $path = 'https://retailminded.com/wp-content/uploads/2013/02/OnlineOutreach.jpg';
         $data = file_get_contents($path);
         $base64Img = base64_encode($data);
         $formData = $form->getData();
+        $paramValArray = $param;
+
         $formData +=[
-            "name" => 'talkremmit',
-            "fname" => 'talkremmit',
-            "lname" => 'talkremmit',
+            "name" => $paramValArray['name'],
+            "fname" => $paramValArray['fname'],
+            "lname" => $paramValArray['lname'],
             "address1" => 'Street1',
             "country_id" => '02',
-            "dob" => '1996-09-10',
-            "telephone" => '+18882077874',
+            "dob" =>  $paramValArray['dob'],
+            "telephone" => '+1'.$paramValArray['telephone'],
             "verify_password" => $formData['password'],
-            "id1_type" => 'talkremmit',
-            "id1_details" => 'talkremmit PROVIDED',
-            "id1_expiry" => '2016-10-10',
+            "id1_type" => $paramValArray['name'],
+            "id1_details" => 'talkremmit Shweta',
+            "id1_expiry" => '2017-10-11',
             "id1_scan" => $base64Img,
-            "postcode" => "TEST PROVIDED",
-            "account_number" => 'Test PROVIDED',
+            "postcode" => $paramValArray['name'],
+            "account_number" => $paramValArray['account_number'],
             "source_country_id" => '02',
             "nationality" => 'US',
             "toc" => true
@@ -298,9 +301,9 @@ class AuthController extends BaseController
         $form = $this->createPostForm(confirmRegisterType::class);
         $form->handleRequest($request);
 
-        if (!$form->isValid()) {
+       /* if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
-        }
+        }*/
 
         $formData = $form->getData();
 

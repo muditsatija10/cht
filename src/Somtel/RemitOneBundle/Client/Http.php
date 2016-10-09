@@ -99,6 +99,8 @@ class Http implements Interfaces\Client\Http
     protected function createResponsePayload($response)
     {
         $raw = $response->getBody()->getContents();
+        /*echo json_encode($raw);
+        die;*/
         $decoded = $this->decoder->decode($raw);
         $payload = $this->payloadFactory->newInstance();
 
