@@ -243,28 +243,28 @@ class AuthController extends BaseController
         if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
         }
-        $path = '/home/robert/Desktop/fuckthat.jpg';
+        $path = '/home/rishabhbansal/Desktop/imgpsh_fullsize.jpg';
         $data = file_get_contents($path);
         $base64Img = base64_encode($data);
         $formData = $form->getData();
         $formData +=[
-            "name" => 'NOT PROVIDED',
-            "fname" => 'NOT PROVIDED',
-            "lname" => 'NOT PROVIDED',
-            "address1" => 'NOT PROVIDED',
-            "country_id" => 'NOT PROVIDED',
-            "dob" => '1000-10-10',
-            "telephone" => '00111111111',
+            "name" => 'talkremmit',
+            "fname" => 'talkremmit',
+            "lname" => 'talkremmit',
+            "address1" => 'Street1',
+            "country_id" => '02',
+            "dob" => '1996-09-10',
+            "telephone" => '+18882077874',
             "verify_password" => $formData['password'],
-            "id1_type" => 'NOT PROVIDED',
-            "id1_details" => 'NOT PROVIDED',
-            "id1_expiry" => '9999-10-10',
+            "id1_type" => 'talkremmit',
+            "id1_details" => 'talkremmit PROVIDED',
+            "id1_expiry" => '2016-10-10',
             "id1_scan" => $base64Img,
-            "postcode" => "NOT PROVIDED",
-            "account_number" => 'NOT PROVIDED',
-            "source_country_id" => '01',
-            "nationality" => 'GB',
-            "toc" => '1'
+            "postcode" => "TEST PROVIDED",
+            "account_number" => 'Test PROVIDED',
+            "source_country_id" => '02',
+            "nationality" => 'US',
+            "toc" => true
         ];
         
         $response = $r1Service->registerRemitter($formData);
