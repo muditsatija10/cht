@@ -7,6 +7,7 @@ use ITG\JumioBundle\Util\NetverifyObject;
 use ITG\MillBundle\Controller\BaseController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\Request;
 
 class JumioController extends BaseController
 {
@@ -26,7 +27,7 @@ class JumioController extends BaseController
      * 
      * @Post("/callback")
      */
-    public function postCallbackAction()
+    public function postCallbackAction(Request $request)
     {
         // TODO: check if this comes from jumio IPs, otherwise this may be faked
 
