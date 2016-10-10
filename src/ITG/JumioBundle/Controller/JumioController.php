@@ -29,5 +29,9 @@ class JumioController extends BaseController
     public function postCallbackAction()
     {
         // TODO: check if this comes from jumio IPs, otherwise this may be faked
+
+        $param = $request->request->all();
+        echo json_encode($param);
+        exit();
     }
 }

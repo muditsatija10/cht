@@ -46,12 +46,16 @@ class BeneficiaryController extends BaseController
         $form = $this->createPostForm(createBeneficiaryType::class);
         $form->handleRequest($request);
 
-        if(! $form->isValid()) {
+        /*if(! $form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
-        }
+        }*/
 
         $formData = $form->getData();
         $r1Service = $this->get('r1.remitter_service');
+        unset($formData['benef_fname']);
+        unset($formData['benef_lname']);
+        $formData['fname'] = $param['fname'];
+        $formData['lname'] = $param['lname'];
         $response = $r1Service->createBeneficiary($formData);
 
         $this->get('log')->execute($param, $type, $response);
