@@ -206,9 +206,11 @@ class AuthController extends BaseController
         if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
         }
-
-        $formData = $form->getData();
-        $response = $r1Service->updateRemitter($formData);
+        
+       /* $formData = $form->getData();
+        echo json_encode($formData);
+        die;*/
+        $response = $r1Service->updateRemitter($param);
         $this->get('log')->execute($param, $type, $response);
 
 
