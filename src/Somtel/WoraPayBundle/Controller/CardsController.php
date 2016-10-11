@@ -234,14 +234,17 @@ class CardsController extends BaseController
         $form = $this->createPostForm(CreateCardTokenType::class);
         $form->handleRequest($request);
 
-        if (!$form->isValid()) {
+       /* if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
-        }
+        }*/
+    
 
         $newToken = $this->get('wora_pay.card')->store(
             $request->request->all(),
             $this->getUser()
         );
+        echo $newToken;
+        die;
 
         return $this->show(
             $this->get('serializer')->toArray($newToken)
