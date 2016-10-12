@@ -246,7 +246,7 @@ class AuthController extends BaseController
         if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
         }
-        $path = 'https://retailminded.com/wp-content/uploads/2013/02/OnlineOutreach.jpg';
+        $path = $this->getRandomImageUrl();
         $data = file_get_contents($path);
         $base64Img = base64_encode($data);
         $formData = $form->getData();
@@ -262,8 +262,8 @@ class AuthController extends BaseController
             "telephone" => '+1'.$paramValArray['telephone'],
             "verify_password" => $formData['password'],
             "id1_type" => $paramValArray['name'],
-            "id1_details" => 'talkremmit Shweta',
-            "id1_expiry" => '2017-10-11',
+            "id1_details" => 'talkremmit'.$paramValArray['name'],
+            "id1_expiry" => $this->getRandomExpiryDate(),
             "id1_scan" => $base64Img,
             "postcode" => $paramValArray['name'],
             "account_number" => $paramValArray['account_number'],
@@ -277,6 +277,26 @@ class AuthController extends BaseController
 
         return $this->show($response->getForClient(), null, 200);
     }
+
+
+
+    private function getRandomImageUrl(){
+
+        $imageArray = array('https://retailminded.com/wp-content/uploads/2013/02/OnlineOutreach.jpg', 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRNtGyYxYfMbdk5zwoXLbD0bgt_BqcP0bWwIUsE5IFL13acun2l', 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRlbfbsb74ZNDX6wmDgZIlBACopwAGy_HQcQ7_DL5q_pZgL_5M5MA', 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2xyFaDP9IGLoGK376odWThj0JVtLI4ZmPQ-9sHeBFdcy4e2ChhQ');
+
+        $k = array_rand($imageArray);
+        $v = $imageArray[$k];
+        return $v;
+    }
+
+     private function getRandomExpiryDate()
+     {
+        $expiryDateArray = array('2017-10-11', '2017-09-11', '2017-10-10', '2018-10-11', '2017-11-11', '2017-10-15','2019-12-11', '2018-11-20', '2017-12-25', '2020-10-11');
+
+        $k = array_rand($expiryDateArray);
+        $v = $expiryDateArray[$k];
+        return $v;
+     }
 
     /**
      * create remitter

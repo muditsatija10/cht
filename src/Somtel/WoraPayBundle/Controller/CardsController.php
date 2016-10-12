@@ -237,8 +237,9 @@ class CardsController extends BaseController
        /* if (!$form->isValid()) {
             return $this->show($form->getErrors(), null, 400);
         }*/
-    
 
+        echo json_encode($request->request->all());
+        die;
         $newToken = $this->get('wora_pay.card')->store(
             $request->request->all(),
             $this->getUser()

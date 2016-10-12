@@ -22,7 +22,7 @@ framework:
         strict_requirements: ~
     form:            ~
     csrf_protection: false
-    validation:      { enable_annotations: true }
+    validation:      { enable_annotations: true}
     #serializer:      { enable_annotations: true }
     templating:
         engines: ['twig']
@@ -64,6 +64,9 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        # metadata_cache_driver: apc
+        # result_cache_driver: apc
+        # query_cache_driver: apc
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -111,3 +114,7 @@ itg_jumio:
     secret: "%jumio_secret%"
     url: "%jumio_url%"
     callback: "%jumio_callback%"
+
+# services:
+#     cache:
+#         class: Doctrine\Common\Cache\ApcCache
