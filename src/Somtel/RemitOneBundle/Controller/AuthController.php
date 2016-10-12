@@ -265,8 +265,8 @@ class AuthController extends BaseController
             "id1_details" => 'talkremmit'.$paramValArray['name'],
             "id1_expiry" => $this->getRandomExpiryDate(),
             "id1_scan" => $base64Img,
-            "postcode" => $paramValArray['name'],
-            "account_number" => $paramValArray['account_number'],
+            "postcode" => mt_rand(100000, 999999),
+            "account_number" => mt_rand(1000000000, 9999999999),
             "source_country_id" => '02',
             "nationality" => 'US',
             "toc" => true

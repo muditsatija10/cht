@@ -42,9 +42,18 @@ class Payload extends AuraPayload implements \JsonSerializable
 
     public function getForClient()
     {
+        if($this->getStatus() == 'FAILURE'){
+            $message = $this->getOutput();
+            $data = array();
+        }
+        else{
+            $message = "Success Response";
+            $data = $this->getOutput();
+        } 
         $response = [
             "status" => $this->getStatus(),
-            "message" => $this->getOutput(),
+            "message" => $message,
+            "data" =>  $data,
         ];
         if ($this->isException()) {
             $response["exception"] = $this->getException()->getMessage();
