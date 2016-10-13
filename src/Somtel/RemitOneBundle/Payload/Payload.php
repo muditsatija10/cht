@@ -45,7 +45,7 @@ class Payload extends AuraPayload implements \JsonSerializable
         if($this->getStatus() == 'FAILURE'){
             $message = $this->getOutput();
             $status = "error";
-            $data = {};
+            $data = "{}";
         }
         else{
             $message = "Success Response";
