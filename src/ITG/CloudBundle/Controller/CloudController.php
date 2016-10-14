@@ -83,5 +83,69 @@ class CloudController extends BaseController
 			}
     	
     }
+    	/**
+	 * @ApiDoc()
+     * @Post("/validateBenificiary")
+     */
+
+     public function postValidateBenificiaryAction(Request $request)
+    {
+         $param = $request->request->all();
+         $currency=$param['currency'];
+         $country=$param['country'];
+         $mandetoryFeilds=$this->getMandeoryFeilds($currency,$country);
+        echo $mandetoryFeilds;
+        exit;
+     }
+     
+      function getMandeoryFeilds($currency='USD',$country='US')
+    {
+        $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+        $retunAuthArray = json_decode($retunAuthVal,true);
+        $auth_token = $retunAuthArray['auth_token'];
+        $headers = array("X-Auth-Token: $auth_token");
+        $fxPostArray=array();
+        $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/beneficiary_required_details?currency='.$currency.'&bank_account_country='.$country;
+        $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
+        $madetoryFeildArray=json_decode($retunFxVal);
+        if(!empty($madetoryFeildArray))
+        {
+            $dataToSend=array();
+            foreach($madetoryFeildArray->details as $key=>$val){
+                //payment_type
+                if(!isset($dataToSend[$val->payment_type]))
+                {
+                    //beneficiary_entity_type
+                    if(!isset($dataToSend[$val->payment_type][$val->beneficiary_entity_type])){
+                        $array=(array) $val;
+                        $array['payment_types']=$array['payment_type'];
+                        unset($array['payment_type']);
+                        $array['account_number']=$array['acct_number'];
+                        unset($array['acct_number']);
+                        $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=  array_keys($array);
+                    }else{
+                        $array=(array) $val;
+                        $array['payment_types']=$array['payment_type'];
+                        unset($array['payment_type']);
+                        $array['account_number']=$array['acct_number'];
+                        unset($array['acct_number']);
+                        $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=array_keys($array);
+                    }
+                }else{
+                    $array=(array) $val;
+                    $array['payment_types']=$array['payment_type'];
+                    unset($array['payment_type']);
+                    $array['account_number']=$array['acct_number'];
+                    unset($array['acct_number']);
+                    $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=array_keys($array);
+                }
+            }
+            //array_keys((array) $val)
+        }
+        
+       return json_encode($dataToSend);
+    }
 
 }

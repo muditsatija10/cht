@@ -41,6 +41,7 @@ class BeneficiaryController extends BaseController
 
     public function postBeneficiaryAction(Request $request)
     {
+        
         $type = 'create-eneficiary';
         $param = $request->request->all();
         
@@ -59,23 +60,26 @@ class BeneficiaryController extends BaseController
         $formData['lname'] = $param['lname'];
         
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'cdbeb4766fa4da19214ef1455c75f97d6e954c69f9e4f1af161f9cb0a66c5257');
+        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
         
-        $headers = array("X-Auth-Token: $auth_token");
-         $fxPostArray  = array('bank_account_holder_name' => $param['benef_name'], 'bank_country' =>'GB', 'currency' => 'GBP', 'name' => 'Employee Funds','account_number'=>$param['account_number'],'routing_code_type_1'=>'aba','routing_code_value_1'=>'011103093','routing_code_type_2'=>'bsb_code','routing_code_value_2'=>'088');
+         $headers = array("X-Auth-Token: $auth_token");
+         //$fxPostArray  = array('bank_account_holder_name' => $param['benef_name'], 'bank_country' =>'GB', 'currency' => 'GBP', 'name' => 'Employee Funds','account_number'=>$param['account_number'],'routing_code_type_1'=>'aba','routing_code_value_1'=>'011103093','routing_code_type_2'=>'bsb_code','routing_code_value_2'=>'088');
+         $fxPostArray=$param;
          $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
          $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
          
-        echo $retunFxVal;exit;
+        
         $response = $r1Service->createBeneficiary($formData);
 
         $this->get('log')->execute($param, $type, $response);
 
         return $this->show($response->getForClient(), null, 200);
     }
+    
+   
     
     
     public function postCloudloginAction(Request $request)
