@@ -70,14 +70,37 @@ class BeneficiaryController extends BaseController
          $headers = array("X-Auth-Token: $auth_token");
          //$fxPostArray  = array('bank_account_holder_name' => $param['benef_name'], 'bank_country' =>'GB', 'currency' => 'GBP', 'name' => 'Employee Funds','account_number'=>$param['account_number'],'routing_code_type_1'=>'aba','routing_code_value_1'=>'011103093','routing_code_type_2'=>'bsb_code','routing_code_value_2'=>'088');
          
-         $fxPostArray=$param;
-         $fxPostArray['payment_types[]']=$param['payment_types'][0];
-         unset($fxPostArray['payment_types']);
+         
+         $currencyCloudArray=$param;
+         
+
+         unset($currencyCloudArray['username']);
+         unset($currencyCloudArray['session_token']);
+         unset($currencyCloudArray['country_id']);
+         unset($currencyCloudArray['dob']);
+         unset($currencyCloudArray['telephone']);
+         unset($currencyCloudArray['mobile']);
+         unset($currencyCloudArray['email']);
+         unset($currencyCloudArray['card_number']);
+         unset($currencyCloudArray['bank']);
+         unset($currencyCloudArray['bank_branch']);
+         unset($currencyCloudArray['bank_branch_city']);
+         unset($currencyCloudArray['Bank_branch_state']);
+         unset($currencyCloudArray['bank_branch_telephone']);
+         unset($currencyCloudArray['bank_branch_manager']);
+         unset($currencyCloudArray['benef_bank_ifsc_code']);
+         $currencyCloudArray['payment_types[]']=$param['payment_types'][0];
+         unset($currencyCloudArray['payment_types']);
+         
+        
          
          $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
-         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
-         
-        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
+        
+          $fxPostArray=$param;
+         $fxPostArray['payment_types[]']=$param['payment_types'][0];
+         unset($fxPostArray['payment_types']);
+         $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
         $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
         $fxPostArray['benef_name']= $fxPostArray['name'];
         $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
@@ -91,8 +114,7 @@ class BeneficiaryController extends BaseController
         unset($fxPostArray['beneficiary_first_name']);
         unset($fxPostArray['beneficiary_last_name']);
         unset($fxPostArray['payment_types[]']);
-        echo "<pre>";
-         print_r($fxPostArray);
+        
         
         $response = $r1Service->createBeneficiary($fxPostArray);
 
@@ -259,14 +281,70 @@ class BeneficiaryController extends BaseController
         $param = $request->request->all();
         $form = $this->createPostForm(updateBeneficiaryType::class);
         $form->handleRequest($request);
-
-        if (! $form->isValid()) {
-            return $this->show($form->getErrors(), null, 400);
-        }
-
         $formData = $form->getData();
+        
         $r1Service = $this->get('r1.remitter_service');
-        $response = $r1Service->updateBeneficiary($formData);
+        unset($formData['benef_fname']);
+        unset($formData['benef_lname']);
+        $formData['fname'] = $param['beneficiary_first_name'];
+        $formData['lname'] = $param['beneficiary_last_name'];
+        
+        
+        $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+        $retunAuthArray = json_decode($retunAuthVal,true);
+        $auth_token = $retunAuthArray['auth_token'];
+        
+         $headers = array("X-Auth-Token: $auth_token");
+         //$fxPostArray  = array('bank_account_holder_name' => $param['benef_name'], 'bank_country' =>'GB', 'currency' => 'GBP', 'name' => 'Employee Funds','account_number'=>$param['account_number'],'routing_code_type_1'=>'aba','routing_code_value_1'=>'011103093','routing_code_type_2'=>'bsb_code','routing_code_value_2'=>'088');
+         $currencyCloudArray=$param;
+         
+
+         unset($currencyCloudArray['username']);
+         unset($currencyCloudArray['session_token']);
+         unset($currencyCloudArray['country_id']);
+         unset($currencyCloudArray['dob']);
+         unset($currencyCloudArray['telephone']);
+         unset($currencyCloudArray['mobile']);
+         unset($currencyCloudArray['email']);
+         unset($currencyCloudArray['card_number']);
+         unset($currencyCloudArray['bank']);
+         unset($currencyCloudArray['bank_branch']);
+         unset($currencyCloudArray['bank_branch_city']);
+         unset($currencyCloudArray['Bank_branch_state']);
+         unset($currencyCloudArray['bank_branch_telephone']);
+         unset($currencyCloudArray['bank_branch_manager']);
+         unset($currencyCloudArray['benef_bank_ifsc_code']);
+         $currencyCloudArray['payment_types[]']=$param['payment_types'][0];
+         unset($currencyCloudArray['payment_types']);
+         
+         
+         
+         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
+         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
+         
+         $fxPostArray=$param;
+         $fxPostArray['payment_types[]']=$param['payment_types'][0];
+         unset($fxPostArray['payment_types']);
+         
+        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+        $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
+        $fxPostArray['benef_name']= $fxPostArray['name'];
+        $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
+        unset($fxPostArray['beneficiary_address']);
+        $fxPostArray['city']= $fxPostArray['beneficiary_city'];
+        unset($fxPostArray['beneficiary_city']);
+        $fxPostArray['benef_bank_swift_code']= $fxPostArray['bic_swift'];
+        unset($fxPostArray['bic_swift']);
+        
+        
+        unset($fxPostArray['beneficiary_first_name']);
+        unset($fxPostArray['beneficiary_last_name']);
+        unset($fxPostArray['payment_types[]']);
+        
+        
+        $response = $r1Service->updateBeneficiary($fxPostArray);
 
         $this->get('log')->execute($param, $type, $response);
 
