@@ -3,6 +3,7 @@
 namespace ITG\CloudBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Get;
 use ITG\MillBundle\Controller\BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,7 +25,7 @@ class CloudController extends BaseController
      public function postCloudloginAction(Request $request)
     {
 			$url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'cdbeb4766fa4da19214ef1455c75f97d6e954c69f9e4f1af161f9cb0a66c5257');
+			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
              
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
@@ -158,7 +159,7 @@ class CloudController extends BaseController
      public function postCreateConversionAction(Request $request)
     {
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'cdbeb4766fa4da19214ef1455c75f97d6e954c69f9e4f1af161f9cb0a66c5257');
+			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
              
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
@@ -175,5 +176,31 @@ class CloudController extends BaseController
             }
 
     }
+
+     /**
+     * @ApiDoc()
+     * @Get("/cloudCurrency")
+     */
+
+    public function getCloudCurrencyAction(Request $request)
+    {
+      
+            $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+            $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+            $retunAuthArray = json_decode($retunAuthVal,true);
+            if(!empty($retunAuthArray['auth_token']))
+            {
+                $auth_token = $retunAuthArray['auth_token'];
+                $headers = array("X-Auth-Token: $auth_token");
+                $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/currencies';
+                $retunCurrency = $this->initiateCrossDomainRequest($fxAPIUrl, array(), 'GET', true, $headers);
+                echo $retunCurrency;
+                exit(); 
+            }
+
+    }
+
+
 
 }

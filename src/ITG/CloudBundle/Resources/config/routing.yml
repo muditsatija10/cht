@@ -9,3 +9,7 @@ validateBenificiary:
 createConversion:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
+
+cloudCurrency:
+    type:     rest
+    resource: ITG\CloudBundle\Controller\CloudController
