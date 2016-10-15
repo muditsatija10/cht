@@ -163,8 +163,17 @@ class CloudController extends BaseController
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
             $auth_token = $retunAuthArray['auth_token'];
-            $headers = array("X-Auth-Token: $auth_token");
-            
+            if(!empty($auth_token))
+            {
+                $headers = array("X-Auth-Token: $auth_token");
+                $fxPostArray  = array('buy_currency' => 'USD', 'sell_currency' =>'GBP', 'amount' => '100', 'fixed_side' => 'buy');
+                
+				$fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/conversions/create';
+				$retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
+				echo $retunFxVal;
+				exit(); 
+            }
+
     }
 
 }
