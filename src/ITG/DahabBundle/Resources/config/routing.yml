@@ -1,3 +1,11 @@
-customer:
+validateCustomer:
+    type:     rest
+    resource: ITG\DahabBundle\Controller\DahabController
+
+processPayment:
+    type:     rest
+    resource: ITG\DahabBundle\Controller\DahabController
+
+sendSMS:
     type:     rest
     resource: ITG\DahabBundle\Controller\DahabController
