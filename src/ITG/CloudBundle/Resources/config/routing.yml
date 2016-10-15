@@ -1,7 +1,11 @@
 cloudlogin:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
-    
+
 validateBenificiary:
+    type:     rest
+    resource: ITG\CloudBundle\Controller\CloudController
+
+createConversion:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
