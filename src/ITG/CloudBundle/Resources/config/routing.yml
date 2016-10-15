@@ -13,3 +13,11 @@ createConversion:
 cloudCurrency:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
+
+cloudConversionDates:
+    type:     rest
+    resource: ITG\CloudBundle\Controller\CloudController
+
+cloudPaymentDates:
+    type:     rest
+    resource: ITG\CloudBundle\Controller\CloudController
