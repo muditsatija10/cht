@@ -83,7 +83,8 @@ class CloudController extends BaseController
 			}
     	
     }
-    	/**
+
+    /**
 	 * @ApiDoc()
      * @Post("/validateBenificiary")
      */
@@ -146,6 +147,33 @@ class CloudController extends BaseController
         }
         
        return json_encode($dataToSend);
+    }
+
+
+    /**
+	 * @ApiDoc()
+     * @Post("/createConversion")
+     */
+
+     public function postCreateConversionAction(Request $request)
+    {
+            $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'cdbeb4766fa4da19214ef1455c75f97d6e954c69f9e4f1af161f9cb0a66c5257');
+             
+            $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+            $retunAuthArray = json_decode($retunAuthVal,true);
+            $auth_token = $retunAuthArray['auth_token'];
+            if(!empty($auth_token))
+            {
+                $headers = array("X-Auth-Token: $auth_token");
+                $fxPostArray  = array('buy_currency' => 'USD', 'sell_currency' =>'GBP', 'amount' => '100', 'fixed_side' => 'buy');
+                
+				$fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/conversions/create';
+				$retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
+				echo $retunFxVal;
+				exit(); 
+            }
+
     }
 
 }
