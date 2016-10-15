@@ -122,6 +122,34 @@ class PaymentCloudController extends BaseController
     }
     
     
+      /**
+         * 
+         * @ApiDoc(
+     *     section="Cloud Payment",
+     *     resource="payment",
+     *     
+     * )
+     */
+    public function postDeletePaymentAction(Request $request)
+    {
+        $param = $request->request->all();
+        $id=$param['id'];
+        $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+	$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+        $retunAuthArray = json_decode($retunAuthVal,true);
+        $auth_token = $retunAuthArray['auth_token'];
+        $headers = array("X-Auth-Token: $auth_token");
+        
+        $fxPostArray  = array();
+        $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id.'/delete';
+        
+        $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
+        echo $retunFxVal;
+        exit(); 
+    }
+    
+    
     
     private function initiateCrossDomainRequest($url, $postArray, $method, $flag, $header)
     {

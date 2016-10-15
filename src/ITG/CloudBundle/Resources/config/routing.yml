@@ -9,12 +9,12 @@ validateBenificiary:
 createConversion:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
-<<<<<<< HEAD
+
     
 findPayment:
     type:     rest
     resource: ITG\CloudBundle\Controller\PaymentCloudController
-=======
+
 
 cloudCurrency:
     type:     rest
@@ -27,4 +27,4 @@ cloudConversionDates:
 cloudPaymentDates:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
->>>>>>> f756a6f65567831458af2daaf81e5d4f7d861d04
+
