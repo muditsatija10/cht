@@ -118,9 +118,7 @@ class BeneficiaryController extends BaseController
         
         
         $response = $r1Service->createBeneficiary($fxPostArray);
-
         $this->get('log')->execute($param, $type, $response);
-
         return $this->show($response->getForClient(), null, 200);
     }
     

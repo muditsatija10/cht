@@ -17,6 +17,9 @@ class CommonController
         if(is_array($response)){
             $response=json_encode($response);
         }
+        if(is_array($message)){
+            $message=json_encode($message);
+        }
         $arrayToReturn=array();
         if($issuccess){
             $arrayToReturn['status']="success";
@@ -25,7 +28,7 @@ class CommonController
         }else{
             $arrayToReturn['status']="error";
             $arrayToReturn['message']=$message;
-            $arrayToReturn['data']=[$response];
+            $arrayToReturn['data']='';
             
         }
         echo json_encode($arrayToReturn);exit;

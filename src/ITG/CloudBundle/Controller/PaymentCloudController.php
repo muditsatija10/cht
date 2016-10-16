@@ -38,8 +38,14 @@ class PaymentCloudController extends BaseController
         $fxPostArray=array();
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/find';
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        
+        if(isset($retunFxValArray->payments)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+        
     }
     
         /**
@@ -66,8 +72,13 @@ class PaymentCloudController extends BaseController
         $fxPostArray  = $param;
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/create';
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id) && $retunFxValArray->id!=''){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+        
     }
     
     
@@ -96,8 +107,13 @@ class PaymentCloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id.'/submission';
         
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(array_key_exists("mt103",$retunFxValArray)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+       
     }
     
       /**
@@ -125,8 +141,12 @@ class PaymentCloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id;
         
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
     }
     
     
@@ -155,8 +175,12 @@ class PaymentCloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id.'/delete';
         
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
     }
     
     
