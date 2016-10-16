@@ -7,3 +7,7 @@ services:
 
     jms_serializer.naming_strategy:
         class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+    
+    app.common_controller:
+        class: AppBundle\Controller\CommonController
+        

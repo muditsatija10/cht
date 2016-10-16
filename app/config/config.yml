@@ -12,6 +12,8 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    api_login_id: "talkremit.api"
+    api_key: "dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab"
 
 framework:
     #esi:             ~

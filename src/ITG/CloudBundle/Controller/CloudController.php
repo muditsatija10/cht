@@ -24,8 +24,10 @@ class CloudController extends BaseController
 
      public function postCloudloginAction(Request $request)
     {
-			$url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
+            $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
@@ -101,9 +103,10 @@ class CloudController extends BaseController
      }
      
       function getMandeoryFeilds($currency='USD',$country='US')
-    {
+    {   $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -158,10 +161,12 @@ class CloudController extends BaseController
 
      public function postCreateConversionAction(Request $request)
     {
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
             $param = $request->request->all();
            
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-            $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
@@ -186,9 +191,10 @@ class CloudController extends BaseController
 
     public function getCloudCurrencyAction(Request $request)
     {
-      
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-            $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
             if(!empty($retunAuthArray['auth_token']))
@@ -211,11 +217,12 @@ class CloudController extends BaseController
 
     public function getCloudConversionDatesAction(Request $request)
     {
-      
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
             $postData = $request->getContent(); 
             $requestArray  = json_decode($postData,true);
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-            $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
             if(!empty($retunAuthArray['auth_token']) && !empty($requestArray))
@@ -240,11 +247,12 @@ class CloudController extends BaseController
 
     public function getCloudPaymentDatesAction(Request $request)
     {
-      
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
             $postData = $request->getContent(); 
             $requestArray  = json_decode($postData,true);
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-            $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
             if(!empty($retunAuthArray['auth_token']) && !empty($requestArray))
