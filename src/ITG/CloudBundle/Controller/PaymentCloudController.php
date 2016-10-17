@@ -26,8 +26,10 @@ class PaymentCloudController extends BaseController
      */
     public function getFindPaymentAction(Request $request)
     {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-	$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -36,8 +38,14 @@ class PaymentCloudController extends BaseController
         $fxPostArray=array();
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/find';
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        
+        if(isset($retunFxValArray->payments)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+        
     }
     
         /**
@@ -50,10 +58,12 @@ class PaymentCloudController extends BaseController
      */
     public function postCreatePaymentAction(Request $request)
     {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $param = $request->request->all();
         
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-	$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -62,8 +72,13 @@ class PaymentCloudController extends BaseController
         $fxPostArray  = $param;
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/create';
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id) && $retunFxValArray->id!=''){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+        
     }
     
     
@@ -77,10 +92,12 @@ class PaymentCloudController extends BaseController
      */
     public function postRetrivePaymentSubmissionAction(Request $request)
     {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $param = $request->request->all();
         $id=$param['id'];
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-	$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -90,8 +107,13 @@ class PaymentCloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id.'/submission';
         
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(array_key_exists("mt103",$retunFxValArray)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+       
     }
     
       /**
@@ -104,10 +126,12 @@ class PaymentCloudController extends BaseController
      */
     public function postRetrivePaymentDetailAction(Request $request)
     {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $param = $request->request->all();
         $id=$param['id'];
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-	$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -117,8 +141,46 @@ class PaymentCloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id;
         
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-        echo $retunFxVal;
-        exit(); 
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
+    }
+    
+    
+      /**
+         * 
+         * @ApiDoc(
+     *     section="Cloud Payment",
+     *     resource="payment",
+     *     
+     * )
+     */
+    public function postDeletePaymentAction(Request $request)
+    {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
+        $param = $request->request->all();
+        $id=$param['id'];
+        $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
+        $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+        $retunAuthArray = json_decode($retunAuthVal,true);
+        $auth_token = $retunAuthArray['auth_token'];
+        $headers = array("X-Auth-Token: $auth_token");
+        
+        $fxPostArray  = array();
+        $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/payments/'.$id.'/delete';
+        
+        $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
+        $retunFxValArray=json_decode($retunFxVal);
+        if(isset($retunFxValArray->id)){
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+        }else{
+            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+        }
     }
     
     

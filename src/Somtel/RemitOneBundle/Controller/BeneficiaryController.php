@@ -41,7 +41,8 @@ class BeneficiaryController extends BaseController
 
     public function postBeneficiaryAction(Request $request)
     {
-        
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $type = 'create-eneficiary';
         $param = $request->request->all();
         
@@ -62,7 +63,7 @@ class BeneficiaryController extends BaseController
         
         
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
@@ -117,9 +118,7 @@ class BeneficiaryController extends BaseController
         
         
         $response = $r1Service->createBeneficiary($fxPostArray);
-
         $this->get('log')->execute($param, $type, $response);
-
         return $this->show($response->getForClient(), null, 200);
     }
     
@@ -128,8 +127,10 @@ class BeneficiaryController extends BaseController
     
     public function postCloudloginAction(Request $request)
     {
-			$url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-			$postArray = array('login_id' => 'talkremit.api', 'api_key' => 'cdbeb4766fa4da19214ef1455c75f97d6e954c69f9e4f1af161f9cb0a66c5257');
+            $loginId= $this->container->getParameter('api_login_id');
+            $apiKey= $this->container->getParameter('api_key');
+            $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+            $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
             $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
             $retunAuthArray = json_decode($retunAuthVal,true);
@@ -277,6 +278,8 @@ class BeneficiaryController extends BaseController
 
     public function postUpdatebeneficiaryAction(Request $request)
     {
+        $loginId= $this->container->getParameter('api_login_id');
+        $apiKey= $this->container->getParameter('api_key');
         $type = 'update-beneficiary';
         $param = $request->request->all();
         $form = $this->createPostForm(updateBeneficiaryType::class);
@@ -291,7 +294,7 @@ class BeneficiaryController extends BaseController
         
         
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-        $postArray = array('login_id' => 'talkremit.api', 'api_key' => 'dee68517cd4a23451a869df1d1df99cd17a2bd7352cab0ef55ba3008627e46ab');
+        $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
