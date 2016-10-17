@@ -97,12 +97,18 @@ class CloudController extends BaseController
          $param = $request->request->all();
          $currency=$param['currency'];
          $country=$param['country'];
-         $mandetoryFeilds=$this->getMandeoryFeilds($currency,$country);
+         $benificiarytype=$param['benificiary_type'];
+         $benificiaryArray=array('individual','company');
+         if(!in_array($benificiarytype,$benificiaryArray)){
+              $message=array('please provide a valid benificiary_type');
+              $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$message,'issuccess'=>false));
+         }
+         $mandetoryFeilds=$this->getMandeoryFeilds($currency,$country,$benificiarytype);
         echo $mandetoryFeilds;
         exit;
      }
      
-      function getMandeoryFeilds($currency='USD',$country='US')
+      function getMandeoryFeilds($currency='USD',$country='US',$benificiarytype=NULL)
     {   $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
@@ -115,42 +121,39 @@ class CloudController extends BaseController
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/beneficiary_required_details?currency='.$currency.'&bank_account_country='.$country;
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
         $madetoryFeildArray=json_decode($retunFxVal);
-        if(!empty($madetoryFeildArray))
+        
+        if(!empty($madetoryFeildArray->details) && !isset($madetoryFeildArray->error_code))
         {
             $dataToSend=array();
             foreach($madetoryFeildArray->details as $key=>$val){
                 //payment_type
-                if(!isset($dataToSend[$val->payment_type]))
-                {
-                    //beneficiary_entity_type
-                    if(!isset($dataToSend[$val->payment_type][$val->beneficiary_entity_type])){
+                if($val->beneficiary_entity_type==$benificiarytype){
+                    if(!isset($dataToSend[$val->payment_type]))
+                    {
                         $array=(array) $val;
                         $array['payment_types']=$array['payment_type'];
                         unset($array['payment_type']);
                         $array['account_number']=$array['acct_number'];
                         unset($array['acct_number']);
-                        $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=  array_keys($array);
+                        $dataToSend[$val->payment_type][]=  array_keys($array);
                     }else{
                         $array=(array) $val;
                         $array['payment_types']=$array['payment_type'];
                         unset($array['payment_type']);
                         $array['account_number']=$array['acct_number'];
                         unset($array['acct_number']);
-                        $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=array_keys($array);
+                        $dataToSend[$val->payment_type][]=array_keys($array);
                     }
-                }else{
-                    $array=(array) $val;
-                    $array['payment_types']=$array['payment_type'];
-                    unset($array['payment_type']);
-                    $array['account_number']=$array['acct_number'];
-                    unset($array['acct_number']);
-                    $dataToSend[$val->payment_type][$val->beneficiary_entity_type][]=array_keys($array);
                 }
+                
             }
             //array_keys((array) $val)
         }
-        
-       return json_encode($dataToSend);
+       if(isset($madetoryFeildArray->details) && !empty($madetoryFeildArray->details)){
+           $this->forward('app.common_controller:apiResponseAction', array('response'=>(object)$dataToSend));
+       }else{
+           $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$madetoryFeildArray,'issuccess'=>false));
+       }
     }
 
 
@@ -178,8 +181,12 @@ class CloudController extends BaseController
                 $fxPostArray  = $param;
                 $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/conversions/create';
                 $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
-                echo $retunFxVal;
-                exit(); 
+                $retunFxValArray=json_decode($retunFxVal);
+                if(isset($retunFxValArray->id) && $retunFxValArray->id!=''){
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+                }else{
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+                }
             }
 
     }
@@ -203,8 +210,12 @@ class CloudController extends BaseController
                 $headers = array("X-Auth-Token: $auth_token");
                 $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/currencies';
                 $retunCurrency = $this->initiateCrossDomainRequest($fxAPIUrl, array(), 'GET', true, $headers);
-                echo $retunCurrency;
-                exit(); 
+                $retunCurrencyArray=json_decode($retunCurrency);
+                if(isset($retunCurrencyArray->currencies) && !empty($retunCurrencyArray->currencies)){
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunCurrencyArray));
+                }else{
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunCurrencyArray,'issuccess'=>false));
+                }
             }
 
     }
@@ -231,9 +242,13 @@ class CloudController extends BaseController
                 $auth_token = $retunAuthArray['auth_token'];
                 $headers = array("X-Auth-Token: $auth_token");
                 $APIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/conversion_dates';
-                $retunCurrencyDateArray = $this->initiateCrossDomainRequest($APIUrl, $requestArray, 'GET', true, $headers);
-                echo $retunCurrencyDateArray;
-                exit(); 
+                $retunCurrencyDate = $this->initiateCrossDomainRequest($APIUrl, $requestArray, 'GET', true, $headers);
+                $retunCurrencyDateArray=json_decode($retunCurrencyDate);
+                if(isset($retunCurrencyDateArray->invalid_payment_dates) && !empty($retunCurrencyDateArray->invalid_payment_dates)){
+                   $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunCurrencyDateArray)); 
+                }else{
+                   $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunCurrencyDateArray,'issuccess'=>false));
+                }
             }
            
 
@@ -260,9 +275,13 @@ class CloudController extends BaseController
                 $auth_token = $retunAuthArray['auth_token'];
                 $headers = array("X-Auth-Token: $auth_token");
                 $APIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/payment_dates';
-                $retunCurrencyDateArray = $this->initiateCrossDomainRequest($APIUrl, $requestArray, 'GET', true, $headers);
-                echo $retunCurrencyDateArray;
-                exit(); 
+                $retunCurrencyDate = $this->initiateCrossDomainRequest($APIUrl, $requestArray, 'GET', true, $headers);
+                $retunCurrencyDateArray=json_decode($retunCurrencyDate);
+                if(isset($retunCurrencyDateArray->invalid_payment_dates) && !empty($retunCurrencyDateArray->invalid_payment_dates)){
+                   $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunCurrencyDateArray)); 
+                }else{
+                   $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunCurrencyDateArray,'issuccess'=>false));
+                }
             }
            
 
