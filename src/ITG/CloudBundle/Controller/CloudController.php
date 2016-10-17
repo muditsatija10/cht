@@ -19,13 +19,14 @@ class CloudController extends BaseController
 
 	/**
 	 * @ApiDoc()
-     * @Post("/cloudlogin")
+     * @Post("/cloudFxRate")
      */
 
-     public function postCloudloginAction(Request $request)
+     public function postCloudFxRateAction(Request $request)
     {
             $loginId= $this->container->getParameter('api_login_id');
             $apiKey= $this->container->getParameter('api_key');
+            $param = $request->request->all();
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
             $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
@@ -33,7 +34,7 @@ class CloudController extends BaseController
             $retunAuthArray = json_decode($retunAuthVal,true);
              $auth_token = $retunAuthArray['auth_token'];
              $headers = array("X-Auth-Token: $auth_token");
-             $fxPostArray  = array('buy_currency' => 'USD', 'sell_currency' =>'GBP', 'amount' => '100', 'fixed_side' => 'buy');
+             $fxPostArray  = $param;
              $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/rates/detailed';
              $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
              echo $retunFxVal;

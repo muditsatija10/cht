@@ -1,4 +1,4 @@
-cloudlogin:
+cloudFxRate:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
 
