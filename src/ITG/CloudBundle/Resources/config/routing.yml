@@ -1,4 +1,4 @@
-cloudlogin:
+cloudFxRate:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
 
@@ -10,11 +10,9 @@ createConversion:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
 
-    
 findPayment:
     type:     rest
     resource: ITG\CloudBundle\Controller\PaymentCloudController
-
 
 cloudCurrency:
     type:     rest
@@ -27,4 +25,3 @@ cloudConversionDates:
 cloudPaymentDates:
     type:     rest
     resource: ITG\CloudBundle\Controller\CloudController
-
