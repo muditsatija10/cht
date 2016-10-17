@@ -60,8 +60,10 @@ class PaymentCloudController extends BaseController
     {
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
-        $param = $request->request->all();
-        
+        //$param = $request->request->all();
+        $postData = $request->getContent(); 
+        $requestArray  = json_decode($postData,true);
+        $param=$requestArray;
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
 	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
         $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
@@ -94,7 +96,9 @@ class PaymentCloudController extends BaseController
     {
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
-        $param = $request->request->all();
+        $postData = $request->getContent(); 
+        $requestArray  = json_decode($postData,true);
+        $param=$requestArray;
         $id=$param['id'];
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
 	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
@@ -128,7 +132,10 @@ class PaymentCloudController extends BaseController
     {
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
-        $param = $request->request->all();
+        //$param = $request->request->all();
+        $postData = $request->getContent(); 
+        $requestArray  = json_decode($postData,true);
+        $param=$requestArray;
         $id=$param['id'];
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
 	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
@@ -162,7 +169,9 @@ class PaymentCloudController extends BaseController
     {
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
-        $param = $request->request->all();
+        $postData = $request->getContent(); 
+        $requestArray  = json_decode($postData,true);
+        $param=$requestArray;
         $id=$param['id'];
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
 	$postArray = array('login_id' => $loginId, 'api_key' => $apiKey);

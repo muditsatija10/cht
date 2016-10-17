@@ -26,7 +26,9 @@ class CloudController extends BaseController
     {
             $loginId= $this->container->getParameter('api_login_id');
             $apiKey= $this->container->getParameter('api_key');
-            $param = $request->request->all();
+            $postData = $request->getContent(); 
+            $requestArray  = json_decode($postData,true);
+            $param=$requestArray;
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
             $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
@@ -37,8 +39,12 @@ class CloudController extends BaseController
              $fxPostArray  = $param;
              $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/rates/detailed';
              $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'GET', true, $headers);
-             echo $retunFxVal;
-             exit(); 
+             $retunFxValArray=json_decode($retunFxVal);
+             if(isset($retunFxValArray->currency_pair) && !empty($retunFxValArray->currency_pair)){
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
+                }else{
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+                }
     }
 
 
@@ -95,7 +101,9 @@ class CloudController extends BaseController
 
      public function postValidateBenificiaryAction(Request $request)
     {
-         $param = $request->request->all();
+         $postData = $request->getContent(); 
+        $requestArray  = json_decode($postData,true);
+        $param=$requestArray;
          $currency=$param['currency'];
          $country=$param['country'];
          $benificiarytype=$param['benificiary_type'];
@@ -167,8 +175,10 @@ class CloudController extends BaseController
     {
             $loginId= $this->container->getParameter('api_login_id');
             $apiKey= $this->container->getParameter('api_key');
-            $param = $request->request->all();
-           
+            //$param = $request->request->all();
+            $postData = $request->getContent(); 
+            $requestArray  = json_decode($postData,true);
+            $param=$requestArray;
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
             $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
@@ -245,7 +255,7 @@ class CloudController extends BaseController
                 $APIUrl = 'https://devapi.thecurrencycloud.com/v2/reference/conversion_dates';
                 $retunCurrencyDate = $this->initiateCrossDomainRequest($APIUrl, $requestArray, 'GET', true, $headers);
                 $retunCurrencyDateArray=json_decode($retunCurrencyDate);
-                if(isset($retunCurrencyDateArray->invalid_payment_dates) && !empty($retunCurrencyDateArray->invalid_payment_dates)){
+                if(isset($retunCurrencyDateArray->invalid_conversion_dates) && !empty($retunCurrencyDateArray->invalid_conversion_dates)){
                    $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunCurrencyDateArray)); 
                 }else{
                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunCurrencyDateArray,'issuccess'=>false));
