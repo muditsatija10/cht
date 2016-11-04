@@ -20,6 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Somtel\PipBundle;
 use Somtel\PipBundle\Entity\PipCashinOrder;
+use Somtel\RemitOneBundle\Entity\SocialLogin;
 use Somtel\RemitOneBundle\Payload\Status;
 use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Util;
@@ -375,4 +376,95 @@ class AuthController extends BaseController
         $this->get('log')->execute($param, $type, $response);
         return $this->show($response->getForClient(), null, 200);
     }
+
+
+    /**
+     * Social Login
+     *
+     * @Post("/remitter/social-login")
+     *
+     */
+
+    public function postRemitterSocialLoginAction(Request $request)
+    {
+        $param = $request->request->all();
+        $social = new SocialLogin();
+        $repository = $this->getDoctrine()->getRepository('RemitOneBundle:SocialLogin');
+        $socialArray = $repository->findOneByEmail($param['email']);
+        $socialPassword = "TalkRemmit1234567";
+        if (!$socialArray) 
+        {
+                $social->setEmail($param['email']);
+                $social->setSource('facebook');
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($social);
+                $em->flush();
+                
+                $type = 'quick-Register';
+                $r1Service = $this->get('r1.remitter_service');
+                $form = $this->createPostForm(createRemitterType::class);
+                $form->handleRequest($request);
+
+                if (!$form->isValid()) {
+                return $this->show($form->getErrors(), null, 400);
+                }
+                $path = $this->getRandomImageUrl();
+                $data = file_get_contents($path);
+                $base64Img = base64_encode($data);
+                $formData = $form->getData();
+                $paramValArray = $param;
+                unset($formData['password']);
+
+                $formData +=[
+                "name" => $paramValArray['name'],
+                "fname" => $paramValArray['fname'],
+                "lname" => $paramValArray['lname'],
+                "address1" => 'Street1',
+                "country_id" => '02',
+                "dob" =>  $paramValArray['dob'],
+                "telephone" => '+1'.$paramValArray['telephone'],
+                "password" => $socialPassword,
+                "verify_password" => $socialPassword,
+                "id1_type" => $paramValArray['name'],
+                "id1_details" => 'talkremmit'.$paramValArray['name'],
+                "id1_expiry" => $this->getRandomExpiryDate(),
+                "id1_scan" => $base64Img,
+                "postcode" => mt_rand(100000, 999999),
+                "account_number" => mt_rand(1000000000, 9999999999),
+                "source_country_id" => '02',
+                "nationality" => 'US',
+                "toc" => true
+                ];
+
+                $response = $r1Service->registerRemitter($formData);
+                $this->get('log')->execute($param, $type, $response);
+                
+                $type = 'confirm-Register';
+                $param = array('email_address' => $param['email'], 'email_verification_code' => '', 'sms_verification_code' => '');
+
+                $responseCon = $r1Service->confirmRegistration($param);
+                $this->get('log')->execute($param, $type, $responseCon);
+
+                return $this->show($responseCon->getForClient(), null, 200);
+
+        }
+        else
+        {
+                $type = 'login';
+                $r1Service = $this->get('r1.remitter_service');
+                $param = array('username' => $param['email'], 'password' => $socialPassword);
+                $response = $r1Service->login($param);
+                $statusCode = 200;
+                if (!$response->isSuccess()) {
+                    $statusCode = 400;
+                }
+                $this->get('log')->execute($param, $type, $response);
+
+                return $this->show($response->getForClient(), null, $statusCode);
+
+        }
+      
+
+    }    
+
 }
