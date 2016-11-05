@@ -93,15 +93,13 @@ class BeneficiaryController extends BaseController
          $currencyCloudArray['payment_types[]']=$param['payment_types'][0];
          unset($currencyCloudArray['payment_types']);
          
+        $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
+        $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
         
-         
-         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
-         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
-        
-          $fxPostArray=$param;
-         $fxPostArray['payment_types[]']=$param['payment_types'][0];
-         unset($fxPostArray['payment_types']);
-         $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+        $fxPostArray=$param;
+        $fxPostArray['payment_types[]']=$param['payment_types'][0];
+        unset($fxPostArray['payment_types']);
+        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
         $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
         $fxPostArray['benef_name']= $fxPostArray['name'];
         $fxPostArray['address1']= $fxPostArray['beneficiary_address'];

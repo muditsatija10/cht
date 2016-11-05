@@ -405,9 +405,9 @@ class AuthController extends BaseController
                 $form = $this->createPostForm(createRemitterType::class);
                 $form->handleRequest($request);
 
-                if (!$form->isValid()) {
+               /* if (!$form->isValid()) {
                 return $this->show($form->getErrors(), null, 400);
-                }
+                }*/
                 $path = $this->getRandomImageUrl();
                 $data = file_get_contents($path);
                 $base64Img = base64_encode($data);
