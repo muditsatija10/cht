@@ -4,6 +4,7 @@ namespace Somtel\RemitOneBundle\Controller;
 
 use AppBundle\Entity\Log;
 use AppBundle\Entity\User;
+use Somtel\RemitOneBundle\Entity\BenficieryMapping;
 use FOS\RestBundle\Controller\Annotations\Post;
 use ITG\MillBundle;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -68,56 +69,80 @@ class BeneficiaryController extends BaseController
         $retunAuthArray = json_decode($retunAuthVal,true);
         $auth_token = $retunAuthArray['auth_token'];
         
-         $headers = array("X-Auth-Token: $auth_token");
-         //$fxPostArray  = array('bank_account_holder_name' => $param['benef_name'], 'bank_country' =>'GB', 'currency' => 'GBP', 'name' => 'Employee Funds','account_number'=>$param['account_number'],'routing_code_type_1'=>'aba','routing_code_value_1'=>'011103093','routing_code_type_2'=>'bsb_code','routing_code_value_2'=>'088');
+        $headers = array("X-Auth-Token: $auth_token");
          
-         
-         $currencyCloudArray=$param;
-         
-
-         unset($currencyCloudArray['username']);
-         unset($currencyCloudArray['session_token']);
-         unset($currencyCloudArray['country_id']);
-         unset($currencyCloudArray['dob']);
-         unset($currencyCloudArray['telephone']);
-         unset($currencyCloudArray['mobile']);
-         unset($currencyCloudArray['email']);
-         unset($currencyCloudArray['card_number']);
-         unset($currencyCloudArray['bank']);
-         unset($currencyCloudArray['bank_branch']);
-         unset($currencyCloudArray['bank_branch_city']);
-         unset($currencyCloudArray['Bank_branch_state']);
-         unset($currencyCloudArray['bank_branch_telephone']);
-         unset($currencyCloudArray['bank_branch_manager']);
-         unset($currencyCloudArray['benef_bank_ifsc_code']);
-         $currencyCloudArray['payment_types[]']=$param['payment_types'][0];
-         unset($currencyCloudArray['payment_types']);
+        $currencyCloudArray=$param;
+        unset($currencyCloudArray['username']);
+        unset($currencyCloudArray['session_token']);
+        unset($currencyCloudArray['country_id']);
+        unset($currencyCloudArray['dob']);
+        unset($currencyCloudArray['telephone']);
+        unset($currencyCloudArray['mobile']);
+        unset($currencyCloudArray['email']);
+        unset($currencyCloudArray['card_number']);
+        unset($currencyCloudArray['bank']);
+        unset($currencyCloudArray['bank_branch']);
+        unset($currencyCloudArray['bank_branch_city']);
+        unset($currencyCloudArray['Bank_branch_state']);
+        unset($currencyCloudArray['bank_branch_telephone']);
+        unset($currencyCloudArray['bank_branch_manager']);
+        unset($currencyCloudArray['benef_bank_ifsc_code']);
+        $currencyCloudArray['payment_types[]']=$param['payment_types[]'];
+        unset($currencyCloudArray['payment_types']);
          
         $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
         $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
+        $returnCloudBenificieryArray  = json_decode($retunFxVal, true);
+        $cloudBenificieryId = $returnCloudBenificieryArray['id'];
+        if(!empty($cloudBenificieryId))
+        {
+                $benificieryMapping = new BenficieryMapping();
+                $fxPostArray=$param;
+                $fxPostArray['payment_types[]']=$param['payment_types[]'];
+                unset($fxPostArray['payment_types']);
+                $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+                $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
+                $fxPostArray['benef_name']= $fxPostArray['name'];
+                $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
+                unset($fxPostArray['beneficiary_address']);
+                $fxPostArray['city']= $fxPostArray['beneficiary_city'];
+                unset($fxPostArray['beneficiary_city']);
+                $fxPostArray['benef_bank_swift_code']= $fxPostArray['bic_swift'];
+                unset($fxPostArray['bic_swift']);
+                unset($fxPostArray['beneficiary_first_name']);
+                unset($fxPostArray['beneficiary_last_name']);
+                unset($fxPostArray['payment_types[]']);
+                $response = $r1Service->createBeneficiary($fxPostArray);               
+                $this->get('log')->execute($param, $type, $response);
+                $extrasArray = $response->getExtras();
+                 if(isset($extrasArray['raw'])){
+                     $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
+                     if($xmlOutputArray->status == 'SUCCESS'){
+                            $benificieryMapping->setEmail($param['username']);
+                            $benificieryMapping->setCloudBenificieryId($cloudBenificieryId);
+                            $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                            $em = $this->getDoctrine()->getManager();
+                            $em->persist($benificieryMapping);
+                            $em->flush();
+
+                     }
+                     else
+                      {
+                            $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
+                            echo json_encode($errorResponse);
+                            exit;
+                      }  
+                 }
+                return $this->show($response->getForClient(), null, 200);
+                
+        }
+        else
+        {
+            $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on currency cloud', 'data' => '{}');
+            echo json_encode($errorResponse);
+            exit;
+        }    
         
-        $fxPostArray=$param;
-        $fxPostArray['payment_types[]']=$param['payment_types'][0];
-        unset($fxPostArray['payment_types']);
-        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
-        $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
-        $fxPostArray['benef_name']= $fxPostArray['name'];
-        $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
-        unset($fxPostArray['beneficiary_address']);
-        $fxPostArray['city']= $fxPostArray['beneficiary_city'];
-        unset($fxPostArray['beneficiary_city']);
-        $fxPostArray['benef_bank_swift_code']= $fxPostArray['bic_swift'];
-        unset($fxPostArray['bic_swift']);
-        
-        
-        unset($fxPostArray['beneficiary_first_name']);
-        unset($fxPostArray['beneficiary_last_name']);
-        unset($fxPostArray['payment_types[]']);
-        
-        
-        $response = $r1Service->createBeneficiary($fxPostArray);
-        $this->get('log')->execute($param, $type, $response);
-        return $this->show($response->getForClient(), null, 200);
     }
     
    
@@ -254,7 +279,25 @@ class BeneficiaryController extends BaseController
         $r1Service = $this->get('r1.remitter_service');
         $response = $r1Service->listBeneficiaries($formData);
         $this->get('log')->execute($param, $type, $response);
+        $outputArray = $response->getOutput();
+        $finalBenificieryArray['beneficiaries']['beneficiary'] = array();
+        if(!empty($outputArray['beneficiaries']['beneficiary'])){
+             $repository = $this->getDoctrine()->getRepository('RemitOneBundle:BenficieryMapping');
+             $benificieryMapping = new BenficieryMapping();
+            foreach ($outputArray['beneficiaries']['beneficiary'] as $key => $value) 
+            {
+            
+                $mappingArray = $repository->findOneByRemmitBenificieryId($value['beneficiary_id']);
+                if(!empty($mappingArray))
+                {
+                    $cloudBenificieryId = $mappingArray->getCloudBenificieryId();
+                    $value['cloud_benificiery_id'] =  $cloudBenificieryId;
+                    $finalBenificieryArray['beneficiaries']['beneficiary'][] = $value;
+                }            
 
+            }
+            $response->setOutput($finalBenificieryArray);
+        }
         return $this->show($response->getForClient(), null, 200);
     }
 
