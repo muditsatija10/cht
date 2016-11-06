@@ -296,8 +296,8 @@ class BeneficiaryController extends BaseController
                 }            
 
             }
-            $response->setOutput($finalBenificieryArray);
         }
+        $response->setOutput($finalBenificieryArray['beneficiaries']['beneficiary']);
         return $this->show($response->getForClient(), null, 200);
     }
 
