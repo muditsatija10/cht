@@ -118,7 +118,9 @@ class CloudController extends BaseController
      }
      
       function getMandeoryFeilds($currency='USD',$country='US',$benificiarytype=NULL)
-    {   $loginId= $this->container->getParameter('api_login_id');
+    {  
+        $defaultArray = array('beneficiary_address', 'beneficiary_city', 'beneficiary_country', 'beneficiary_entity_type', 'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_state_or_province', 'beneficiary_postcode', 'payment_types', 'account_number');
+        $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
         $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
@@ -144,20 +146,28 @@ class CloudController extends BaseController
                         unset($array['payment_type']);
                         $array['account_number']=$array['acct_number'];
                         unset($array['acct_number']);
-                        $dataToSend[$val->payment_type][]=  array_keys($array);
+                        //print_r($array);
+                        $keysArray = array_keys($array);
+                        $result=array_diff($keysArray,$defaultArray);
+                        $dataToSend[$val->payment_type][]=  array_values($result);
+                        //$dataToSend[$val->payment_type][]=  array_keys($array);
                     }else{
                         $array=(array) $val;
                         $array['payment_types']=$array['payment_type'];
                         unset($array['payment_type']);
                         $array['account_number']=$array['acct_number'];
                         unset($array['acct_number']);
-                        $dataToSend[$val->payment_type][]=array_keys($array);
+                        $keysArray = array_keys($array);
+                        $result=array_diff($keysArray,$defaultArray);
+                        $dataToSend[$val->payment_type][]=  array_values($result);
+                        //$dataToSend[$val->payment_type][]=array_keys($array);
                     }
                 }
                 
             }
             //array_keys((array) $val)
         }
+        
        if(isset($madetoryFeildArray->details) && !empty($madetoryFeildArray->details)){
            $this->forward('app.common_controller:apiResponseAction', array('response'=>(object)$dataToSend));
        }else{
