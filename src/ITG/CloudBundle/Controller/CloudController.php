@@ -135,7 +135,7 @@ class CloudController extends BaseController
         
         if(!empty($madetoryFeildArray->details) && !isset($madetoryFeildArray->error_code))
         {
-            $dataToSend=array();
+            //$dataToSend=array();
             foreach($madetoryFeildArray->details as $key=>$val){
                 //payment_type
                 if($val->beneficiary_entity_type==$benificiarytype){
@@ -149,7 +149,8 @@ class CloudController extends BaseController
                         //print_r($array);
                         $keysArray = array_keys($array);
                         $result=array_diff($keysArray,$defaultArray);
-                        $dataToSend[$val->payment_type][]=  array_values($result);
+                        $resArray = array_values($result);
+                        $dataToSend[$val->payment_type][]= implode(',', $resArray); 
                         //$dataToSend[$val->payment_type][]=  array_keys($array);
                     }else{
                         $array=(array) $val;
@@ -159,17 +160,22 @@ class CloudController extends BaseController
                         unset($array['acct_number']);
                         $keysArray = array_keys($array);
                         $result=array_diff($keysArray,$defaultArray);
-                        $dataToSend[$val->payment_type][]=  array_values($result);
+                        $resArray = array_values($result);
+                        $dataToSend[$val->payment_type][]= implode(',', $resArray);
                         //$dataToSend[$val->payment_type][]=array_keys($array);
                     }
                 }
                 
             }
+           
             //array_keys((array) $val)
         }
-        
+    
        if(isset($madetoryFeildArray->details) && !empty($madetoryFeildArray->details)){
-           $this->forward('app.common_controller:apiResponseAction', array('response'=>(object)$dataToSend));
+           $responseArray = array("status" => "success", "message" => "Success Response", "data" => (object)$dataToSend);
+           echo json_encode($responseArray);
+           exit;
+           //$this->forward('app.common_controller:apiResponseAction', array('response'=>(object)$dataToSend));
        }else{
            $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$madetoryFeildArray,'issuccess'=>false));
        }
