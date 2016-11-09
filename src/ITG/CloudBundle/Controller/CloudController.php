@@ -217,6 +217,7 @@ class CloudController extends BaseController
             $postData = $request->getContent(); 
             $requestArray  = json_decode($postData,true);
             $param=$requestArray;
+            $payoutOptionArray = $this->getDestinationPayoutOption($param['destination_country']);
             $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
             $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
              
@@ -226,11 +227,13 @@ class CloudController extends BaseController
             if(!empty($auth_token))
             {
                 $headers = array("X-Auth-Token: $auth_token");
+                unset($param['destination_country']);
                 #$fxPostArray  = array('buy_currency' => 'USD', 'sell_currency' =>'GBP', 'amount' => '100', 'fixed_side' => 'buy','reason'=>'Settling invoices','term_agreement'=>'true');
                 $fxPostArray  = $param;
                 $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/conversions/create';
                 $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $fxPostArray, 'POST', true, $headers);
                 $retunFxValArray=json_decode($retunFxVal);
+                $retunFxValArray->payout_option =  $payoutOptionArray;
                 if(isset($retunFxValArray->id) && $retunFxValArray->id!=''){
                     $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
                 }else{
@@ -238,6 +241,56 @@ class CloudController extends BaseController
                 }
             }
 
+    }
+
+    private function getDestinationPayoutOption($currency = 'GB')
+    {
+         $payoutArray = array('GB' => array('Bank Account', 'Cash Collection'),
+                              'US' => array('Bank Account', 'Cash Collection'),
+                              'AU' => array('Bank Account', 'Cash Collection'),
+                              'BE' => array('Bank Account', 'Cash Collection'),
+                              'BG' => array('Bank Account'),
+                              'CA' => array('Bank Account', 'Cash Collection'),
+                              'CY' => array('Bank Account'),
+                              'CZ' => array('Bank Account'),
+                              'DK' => array('Bank Account', 'Cash Collection'),
+                              'EE' => array('Bank Account'),
+                              'FI' => array('Bank Account', 'Cash Collection'),
+                              'FR' => array('Bank Account', 'Cash Collection'),
+                              'DE' => array('Bank Account'),
+                              'GR' => array('Bank Account'),
+                              'HK' => array('Bank Account'),
+                              'HU' => array('Bank Account'),
+                              'IE' => array('Bank Account', 'Cash Collection'),
+                              'IL' => array('Bank Account'),
+                              'IT' => array('Bank Account', 'Cash Collection'),
+                              'JP' => array('Bank Account'),
+                              'LV' => array('Bank Account'),
+                              'LT' => array('Bank Account'),
+                              'LU' => array('Bank Account'),
+                              'MT' => array('Bank Account', 'Cash Collection'),
+                              'MX' => array('Bank Account'),
+                              'NL' => array('Bank Account', 'Cash Collection'),
+                              'NZ' => array('Bank Account', 'Cash Collection'),
+                              'NO' => array('Bank Account', 'Cash Collection'),
+                              'PL' => array('Bank Account'),
+                              'PT' => array('Bank Account'),
+                              'QA' => array('Bank Account'),
+                              'RO' => array('Bank Account'),
+                              'SA' => array('Bank Account'),
+                              'SG' => array('Bank Account'),
+                              'SK' => array('Bank Account'),
+                              'SI' => array('Bank Account'), 
+                              'SO' => array('Bank Account', 'Cash Collection', 'Mobile Wallet'), 
+                              'ZA' => array('Bank Account', 'Cash Collection'),
+                              'ES' => array('Bank Account', 'Cash Collection'),
+                              'SE' => array('Bank Account', 'Cash Collection'),
+                              'CH' => array('Bank Account', 'Cash Collection'),
+                              'TR' => array('Bank Account', 'Cash Collection'), 
+                              'AE' => array('Bank Account', 'Cash Collection'),  
+                              'AE' => array('Bank Account')
+                              );
+        return $payoutArray[$currency];
     }
 
      /**
