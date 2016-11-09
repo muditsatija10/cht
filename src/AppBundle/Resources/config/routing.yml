@@ -1,0 +1,3 @@
+payments:
+    type:     rest
+    resource: AppBundle\Controller\PaymentsController

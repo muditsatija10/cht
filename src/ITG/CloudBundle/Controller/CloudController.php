@@ -119,7 +119,7 @@ class CloudController extends BaseController
      
       function getMandeoryFeilds($currency='USD',$country='US',$benificiarytype=NULL)
     {  
-        $defaultArray = array('beneficiary_address', 'beneficiary_city', 'beneficiary_country', 'beneficiary_entity_type', 'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_state_or_province', 'beneficiary_postcode', 'payment_types', 'account_number');
+        $defaultArray = array('beneficiary_address', 'beneficiary_city', 'beneficiary_country', 'beneficiary_entity_type', 'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_state_or_province', 'beneficiary_postcode', 'payment_types');
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
@@ -150,7 +150,7 @@ class CloudController extends BaseController
                         $keysArray = array_keys($array);
                         $result=array_diff($keysArray,$defaultArray);
                         $resArray = array_values($result);
-                        $dataToSend[$val->payment_type][]= implode(',', $resArray); 
+                        $dataToSend[$val->payment_type][]= $resArray; 
                         //$dataToSend[$val->payment_type][]=  array_keys($array);
                     }else{
                         $array=(array) $val;
@@ -161,7 +161,7 @@ class CloudController extends BaseController
                         $keysArray = array_keys($array);
                         $result=array_diff($keysArray,$defaultArray);
                         $resArray = array_values($result);
-                        $dataToSend[$val->payment_type][]= implode(',', $resArray);
+                        $dataToSend[$val->payment_type][] =  $resArray;
                         //$dataToSend[$val->payment_type][]=array_keys($array);
                     }
                 }
@@ -170,9 +170,31 @@ class CloudController extends BaseController
            
             //array_keys((array) $val)
         }
-    
+        $finalArray =array();
+        foreach ($dataToSend as $key => $value) {
+             
+              foreach ($value as $ke => $val) {
+                  
+                  foreach ($val as $k => $v) 
+                  {
+                      if(!isset($finalArray[$key]))
+                      {
+                         $finalArray[$key][] = $v;
+                      }
+                      else
+                      {
+                           if(!in_array($v, $finalArray[$key]))
+                           {
+                             $finalArray[$key][] = $v;
+                           }
+                      }
+                    
+                  }
+              }
+        }
+     
        if(isset($madetoryFeildArray->details) && !empty($madetoryFeildArray->details)){
-           $responseArray = array("status" => "success", "message" => "Success Response", "data" => (object)$dataToSend);
+           $responseArray = array("status" => "success", "message" => "Success Response", "data" => (object)$finalArray);
            echo json_encode($responseArray);
            exit;
            //$this->forward('app.common_controller:apiResponseAction', array('response'=>(object)$dataToSend));

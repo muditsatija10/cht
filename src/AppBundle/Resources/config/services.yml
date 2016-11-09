@@ -1,0 +1,36 @@
+services:
+  app.payment:
+    class: AppBundle\Service\PaymentService
+    arguments: ['@doctrine.orm.entity_manager', '@r1.remitter_service', '@wora_pay.api_service', '@security.token_storage', '@logger']
+
+  app.producer.payment:
+    class: AppBundle\Pheanstalk\PaymentProducer
+    arguments: ['@leezy.pheanstalk']
+
+  app.worker.payment:
+    class: AppBundle\Pheanstalk\PaymentWorker
+    arguments: ['@app.payment']
+
+  app.consumer.payment:
+    class: AppBundle\Pheanstalk\PaymentConsumer
+    arguments: ['@leezy.pheanstalk', '@app.worker.payment']
+
+  security.auth.transaction_voter:
+    class: AppBundle\Security\TransactionVoter
+    arguments: ['@doctrine.orm.entity_manager']
+    tags:
+      - { name: security.voter }
+
+  security.auth.transaction_verification_voter:
+    class: AppBundle\Security\TransactionVerificationVoter
+    arguments: ['@doctrine.orm.entity_manager', '@app.payment']
+    tags:
+      - { name: security.voter }
+
+  app.user:
+    class: AppBundle\Service\UserService
+    arguments: ['@doctrine.orm.entity_manager', '@security.password_encoder', '@itg_mill.guid_generator']
+
+  app.geoip:
+    class: AppBundle\Service\GeoIpService
+    arguments: ['%geoip_db_path%', '@logger']

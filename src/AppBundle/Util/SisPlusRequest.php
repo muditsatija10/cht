@@ -3,7 +3,11 @@
 namespace AppBundle\Util;
 
 use AppBundle\Entity\Log;
+use AppBundle\Entity\W2Check;
+use AppBundle\Entity\W2CheckBeneficiary;
 use Doctrine\ORM\EntityManager;
+use SoapClient;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class SisPlusRequest
@@ -17,21 +21,130 @@ class SisPlusRequest
 
 //TODO: Fix copied code
 
-    public function execute($request)
+    public function execute($request,$is_remitter)
     {
-        Die(print_r('test'));
-        $response = $this->createBeneficiary($request); //calls the Api class for response
-        $log = new Log();
 
-        $log->setRequest(json_encode($request));
-        $log->setResponse(json_encode($response));
-        $log->setType('Beneficiaries');
+        $validate = $request;
+        
         $em = $this->_em;
-        $em->persist($log);
-        $em->flush();
+        if($is_remitter == true)
+        {
+        $user = $em->getRepository('AppBundle:W2Check')->findOneBy([
+            'user' => $validate['id']],['id' => 'DESC']);
+        }else
+        {
+        $user = $em->getRepository('AppBundle:W2CheckBeneficiary')->findOneBy([
+            'user' => $validate['id']],['id' => 'DESC']);
+        }
+        if(!empty($user))
+        {
+            
+            if($user->getValid()=='Pass'){
 
-        //TODO: Return some status to the Create Beneficiary controller
-        return $response; // response can be anything
+                $currentDate = new \DateTime();
+                $currentDate->modify('-3 months');
+
+                if($currentDate >= $user->getTimeStamp())
+                {
+                    return $this->Validate($validate,$is_remitter);
+                }else
+                {
+                    return $user;
+                }
+
+            }else {
+                if($user['status'] !== 'blocked')
+                {
+                    return $this->Validate($validate,$is_remitter); 
+                }
+                return $user;
+            }
+
+        }else
+        {
+
+            return $this->Validate($validate,$is_remitter);
+        }
+        
+
+    }
+
+    function Validate($validate,$is_remitter)
+    {
+
+        $em = $this->_em;
+        $log = new Log();
+        $log->setProject('w2');
+
+        $url= 'https://apiv3-uat.w2globaldata.com/Service.svc?wsdl';
+
+        $client = new SoapClient($url);
+if($is_remitter == false)
+{
+    $validate['firstname'] = $validate['fname'];
+    $validate['lastname'] = $validate['lname'];
+}
+        $string =array(
+            'serviceRequest' => array
+            (
+                'BundleData'=> array
+                (
+                    'BundleName' =>'KYC_SIS_PEP'
+                ),
+                'QueryData'=> array
+                (
+                    'NameQuery' =>$validate['firstname'].' '.$validate['lastname']
+                ),
+                'ServiceAuthorisation'=> array
+                (
+                    'APIKey' =>'2ef54e12-0c3c-499b-afc3-311dc8776d0f',
+                    'ClientReference' => 'Testing W2 services'
+                )
+            )
+        );
+  
+        $log->setPayload(json_encode($string));
+        $response = $client->KYCCheck($string);
+       
+        $log->setResponse(json_encode($response));
+        $log->setType('w2_check');
+       
+        /* Print webservice response */
+        $service_Transactions = $response->KYCCheckResult->ProcessRequestResult->TransactionInformation->ServiceTransactions->ServiceTransactionInformation;
+        $em->persist($log);
+        $valid = null;
+        $notValid = null;
+
+        foreach ($service_Transactions as $transaction)
+        {
+
+            if($transaction->ValidationResult == 'Pass')
+            {
+                $valid = 'Pass';
+            }else
+            {
+                $notValid = 'blocked';
+            }
+        }
+
+        if($is_remitter == true)
+        {
+        $user = new W2Check();
+        }else
+        {
+        $user = new W2CheckBeneficiary(); 
+        }
+        $user->setUser($validate['id']);
+        if(empty($notValid)){
+            $user->setValid($valid);
+        }else
+        {
+            $user->setValid($notValid);
+        }
+
+        $em->persist($user);
+        $em->flush();
+        Return $user;
     }
 
 }

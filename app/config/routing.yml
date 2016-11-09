@@ -44,4 +44,8 @@ itg_cloud:
     type:   rest
     resource: "@ITGCloudBundle/Resources/config/routing.yml"
 
+api_user:
+    type:   rest
+    resource: "@AppBundle/Resources/config/routing.yml"
+
 
