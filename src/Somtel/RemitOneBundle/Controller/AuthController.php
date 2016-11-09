@@ -252,18 +252,20 @@ class AuthController extends BaseController
         $base64Img = base64_encode($data);
         $formData = $form->getData();
         $paramValArray = $param;
-
+        $emailArray = explode('@', $paramValArray['email']);
+        $emailIndexVal = substr($emailArray[0],0,4);
+       
         $formData +=[
-            "name" => $paramValArray['name'],
-            "fname" => $paramValArray['fname'],
-            "lname" => $paramValArray['lname'],
+            "name" => $emailIndexVal,
+            "fname" => $emailIndexVal,
+            "lname" => $emailIndexVal,
             "address1" => 'Street1',
             "country_id" => '02',
-            "dob" =>  $paramValArray['dob'],
-            "telephone" => '+1'.$paramValArray['telephone'],
+            "dob" =>  $this->getRandomDob(),
+            "telephone" => '+1'.$this->getRandomTelephone(),
             "verify_password" => $formData['password'],
-            "id1_type" => $paramValArray['name'],
-            "id1_details" => 'talkremmit'.$paramValArray['name'],
+            "id1_type" => $this->getRandomIdType(),
+            "id1_details" => 'talkremmit '.$emailIndexVal,
             "id1_expiry" => $this->getRandomExpiryDate(),
             "id1_scan" => $base64Img,
             "postcode" => mt_rand(100000, 999999),
@@ -281,6 +283,33 @@ class AuthController extends BaseController
 
 
 
+    private function getRandomIdType(){
+         $imageArray = array('Passport', 'Driving_License', 'National_Insurance', 'National_ID', 'Utility_Bill','Other');
+         $k = array_rand($imageArray);
+         $v = $imageArray[$k];
+         return $v;
+    }
+
+     private function getRandomDob()
+     {
+        $dobDateArray = array('1985-10-11', '1985-09-11', '1985-10-10', '1985-10-11', '1985-11-11', '1985-10-15','1985-12-11', '1986-11-20', '1981-12-25', '1982-10-11', '1982-12-01', '1983-12-02', '1984-12-03', '1986-12-04', '1981-12-05', '1980-12-06', '1982-12-12');
+
+        $k = array_rand($dobDateArray);
+        $v = $dobDateArray[$k];
+        return $v;
+    }
+
+    private function getRandomTelephone()
+     {
+        $teleArray = array('8882077874','1111111111' ,'2222222222', '3333333333', '4444444444', '5555555555','6666666666', '7777777777','8888888888', '9999999999', '1234567890', '1987645321');
+
+        $k = array_rand($teleArray);
+        $v = $teleArray[$k];
+        return $v;
+    }
+
+
+
     private function getRandomImageUrl(){
 
         $imageArray = array('https://retailminded.com/wp-content/uploads/2013/02/OnlineOutreach.jpg', 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRNtGyYxYfMbdk5zwoXLbD0bgt_BqcP0bWwIUsE5IFL13acun2l', 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRlbfbsb74ZNDX6wmDgZIlBACopwAGy_HQcQ7_DL5q_pZgL_5M5MA', 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2xyFaDP9IGLoGK376odWThj0JVtLI4ZmPQ-9sHeBFdcy4e2ChhQ');
@@ -292,7 +321,7 @@ class AuthController extends BaseController
 
      private function getRandomExpiryDate()
      {
-        $expiryDateArray = array('2017-10-11', '2017-09-11', '2017-10-10', '2018-10-11', '2017-11-11', '2017-10-15','2019-12-11', '2018-11-20', '2017-12-25', '2020-10-11');
+        $expiryDateArray = array('2017-10-11', '2017-09-11', '2017-10-10', '2018-10-11', '2017-11-11', '2017-10-15','2019-12-11', '2018-11-20', '2017-12-25', '2020-10-11', '2019-12-01', '2019-12-02', '2019-12-03', '2019-12-04', '2019-12-05', '2019-12-06', '2019-12-12');
 
         $k = array_rand($expiryDateArray);
         $v = $expiryDateArray[$k];
