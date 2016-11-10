@@ -119,7 +119,7 @@ class CloudController extends BaseController
      
       function getMandeoryFeilds($currency='USD',$country='US',$benificiarytype=NULL)
     {  
-        $defaultArray = array('beneficiary_address', 'beneficiary_city', 'beneficiary_country', 'beneficiary_entity_type', 'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_state_or_province', 'beneficiary_postcode', 'payment_types');
+        $defaultArray = array('beneficiary_address', 'beneficiary_city', 'beneficiary_country', 'beneficiary_entity_type', 'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_state_or_province', 'beneficiary_postcode', 'payment_types','beneficiary_company_name');
         $loginId= $this->container->getParameter('api_login_id');
         $apiKey= $this->container->getParameter('api_key');
         $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
