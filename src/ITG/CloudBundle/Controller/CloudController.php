@@ -237,7 +237,7 @@ class CloudController extends BaseController
                 if(isset($retunFxValArray->id) && $retunFxValArray->id!=''){
                     $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunFxValArray));
                 }else{
-                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>$retunFxValArray,'issuccess'=>false));
+                    $this->forward('app.common_controller:apiResponseAction', array('response'=>'','message'=>'Sorry, at the moment we are unable to offer online trading for the selected currency pair. Please contact us to discuss your requirements.','issuccess'=>false));
                 }
             }
 
