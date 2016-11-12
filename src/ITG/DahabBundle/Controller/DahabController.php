@@ -85,17 +85,24 @@ class DahabController extends BaseController
     {
          $postData = $request->getContent();
          $postDataArray = json_decode($postData, true);
-         if(!empty($postDataArray['payout_option']))
+         if(!empty($postDataArray['PayoutOption']))
          {              
-              if($postDataArray['payout_option'] == 'cash')
+              if($postDataArray['PayoutOption'] == 'cash')
               {   
-              	    unset($postDataArray['payout_option']);
+              	    unset($postDataArray['PayoutOption']);
+              	    $postDataArray['CustomerID'] =  $postDataArray['username'];
+              	    unset($postDataArray['username']);
+              	    $postDataArray['OrigReferenceNo'] =  time();
+              	    $postDataArray['Comm'] = 6;
+              	    $postDataArray['Option'] = 'Cash Pickup';
               	    $postData = json_encode($postDataArray);
+
                     $this->processDahabshiilPayment($postData);
               } 
               else
               {
-              	  unset($postDataArray['payout_option']);
+              	  unset($postDataArray['PayoutOption']);
+              	  unset($postDataArray['username']);
               	  $postDataArray['TransactionId'] = time();
               	  $postData = json_encode($postDataArray);
                   $this->processDahabPayment($postData);
@@ -148,7 +155,9 @@ class DahabController extends BaseController
 			{
 			    $retunValArray=json_decode($output);
 				 if(isset($retunValArray->Transaction))
-				 {
+				 { 
+				 	$retunValArray->TransactionId = $retunValArray->Transaction;
+				 	unset($retunValArray->Transaction);
 				    $this->forward('app.common_controller:apiResponseAction', array('response'=>$retunValArray));
 				 }
 				 else
