@@ -32,6 +32,12 @@ class BenficieryMapping
      */
     private $remmitBenificieryId;
 
+    /**
+     * @ORM\Column(type="string", length=15)
+     */
+    private $type;
+
+
 
     /**
      * Get id
@@ -113,5 +119,29 @@ class BenficieryMapping
     public function getRemmitBenificieryId()
     {
         return $this->remmitBenificieryId;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return BenficieryMapping
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

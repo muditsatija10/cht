@@ -46,103 +46,154 @@ class BeneficiaryController extends BaseController
         $apiKey= $this->container->getParameter('api_key');
         $type = 'create-eneficiary';
         $param = $request->request->all();
-        
-        $form = $this->createPostForm(createBeneficiaryType::class);
-        $form->handleRequest($request);
-
-        /*if(! $form->isValid()) {
-            return $this->show($form->getErrors(), null, 400);
-        }*/
-
-        $formData = $form->getData();
-        
-        $r1Service = $this->get('r1.remitter_service');
-        unset($formData['benef_fname']);
-        unset($formData['benef_lname']);
-        $formData['fname'] = $param['beneficiary_first_name'];
-        $formData['lname'] = $param['beneficiary_last_name'];
-        
-        
-        $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
-        $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
-        $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
-        $retunAuthArray = json_decode($retunAuthVal,true);
-        $auth_token = $retunAuthArray['auth_token'];
-        
-        $headers = array("X-Auth-Token: $auth_token");
-         
-        $currencyCloudArray=$param;
-        unset($currencyCloudArray['username']);
-        unset($currencyCloudArray['session_token']);
-        unset($currencyCloudArray['country_id']);
-        unset($currencyCloudArray['dob']);
-        unset($currencyCloudArray['telephone']);
-        unset($currencyCloudArray['mobile']);
-        unset($currencyCloudArray['email']);
-        unset($currencyCloudArray['card_number']);
-        unset($currencyCloudArray['bank']);
-        unset($currencyCloudArray['bank_branch']);
-        unset($currencyCloudArray['bank_branch_city']);
-        unset($currencyCloudArray['Bank_branch_state']);
-        unset($currencyCloudArray['bank_branch_telephone']);
-        unset($currencyCloudArray['bank_branch_manager']);
-        unset($currencyCloudArray['benef_bank_ifsc_code']);
-        $currencyCloudArray['payment_types[]']=$param['payment_types[]'];
-        unset($currencyCloudArray['payment_types']);
-         
-        $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
-        $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
-        $returnCloudBenificieryArray  = json_decode($retunFxVal, true);
-        $cloudBenificieryId = $returnCloudBenificieryArray['id'];
-        if(!empty($cloudBenificieryId))
+        $beneficiary_type  = $param['beneficiary_type'];
+        unset($param['beneficiary_type']); 
+        if(!empty($beneficiary_type))
         {
-                $benificieryMapping = new BenficieryMapping();
-                $fxPostArray=$param;
-                $fxPostArray['payment_types[]']=$param['payment_types[]'];
-                unset($fxPostArray['payment_types']);
-                $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
-                $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
-                $fxPostArray['benef_name']= $fxPostArray['name'];
-                $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
-                unset($fxPostArray['beneficiary_address']);
-                $fxPostArray['city']= $fxPostArray['beneficiary_city'];
-                unset($fxPostArray['beneficiary_city']);
-                $fxPostArray['benef_bank_swift_code']= $fxPostArray['bic_swift'];
-                unset($fxPostArray['bic_swift']);
-                unset($fxPostArray['beneficiary_first_name']);
-                unset($fxPostArray['beneficiary_last_name']);
-                unset($fxPostArray['payment_types[]']);
-                $response = $r1Service->createBeneficiary($fxPostArray);               
-                $this->get('log')->execute($param, $type, $response);
-                $extrasArray = $response->getExtras();
-                 if(isset($extrasArray['raw'])){
-                     $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
-                     if($xmlOutputArray->status == 'SUCCESS'){
-                            $benificieryMapping->setEmail($param['username']);
-                            $benificieryMapping->setCloudBenificieryId($cloudBenificieryId);
-                            $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
-                            $em = $this->getDoctrine()->getManager();
-                            $em->persist($benificieryMapping);
-                            $em->flush();
+            $r1Service = $this->get('r1.remitter_service');
+            if($beneficiary_type == 'cloud')
+            {
+                $form = $this->createPostForm(createBeneficiaryType::class);
+                $form->handleRequest($request);
 
-                     }
-                     else
-                      {
-                            $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
-                            echo json_encode($errorResponse);
-                            exit;
-                      }  
-                 }
-                return $this->show($response->getForClient(), null, 200);
+               
+                $formData = $form->getData();
                 
+                unset($formData['benef_fname']);
+                unset($formData['benef_lname']);
+                $formData['fname'] = $param['beneficiary_first_name'];
+                $formData['lname'] = $param['beneficiary_last_name'];
+                
+                
+                $url = "https://devapi.thecurrencycloud.com/v2/authenticate/api";
+                $postArray = array('login_id' => $loginId, 'api_key' => $apiKey);
+                $retunAuthVal = $this->initiateCrossDomainRequest($url, $postArray, 'POST', false, array());
+                $retunAuthArray = json_decode($retunAuthVal,true);
+                $auth_token = $retunAuthArray['auth_token'];
+                
+                $headers = array("X-Auth-Token: $auth_token");
+                 
+                $currencyCloudArray=$param;
+                unset($currencyCloudArray['username']);
+                unset($currencyCloudArray['session_token']);
+                unset($currencyCloudArray['country_id']);
+                unset($currencyCloudArray['dob']);
+                unset($currencyCloudArray['telephone']);
+                unset($currencyCloudArray['mobile']);
+                unset($currencyCloudArray['email']);
+                unset($currencyCloudArray['card_number']);
+                unset($currencyCloudArray['bank']);
+                unset($currencyCloudArray['bank_branch']);
+                unset($currencyCloudArray['bank_branch_city']);
+                unset($currencyCloudArray['Bank_branch_state']);
+                unset($currencyCloudArray['bank_branch_telephone']);
+                unset($currencyCloudArray['bank_branch_manager']);
+                unset($currencyCloudArray['benef_bank_ifsc_code']);
+                $currencyCloudArray['payment_types[]']=$param['payment_types[]'];
+                unset($currencyCloudArray['payment_types']);
+                 
+                $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
+                $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
+                $returnCloudBenificieryArray  = json_decode($retunFxVal, true);
+                $cloudBenificieryId = $returnCloudBenificieryArray['id'];
+                if(!empty($cloudBenificieryId))
+                {
+                        $benificieryMapping = new BenficieryMapping();
+                        $fxPostArray=$param;
+                        $fxPostArray['payment_types[]']=$param['payment_types[]'];
+                        unset($fxPostArray['payment_types']);
+                        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+                        $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
+                        $fxPostArray['benef_name']= $fxPostArray['name'];
+                        $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
+                        unset($fxPostArray['beneficiary_address']);
+                        $fxPostArray['city']= $fxPostArray['beneficiary_city'];
+                        unset($fxPostArray['beneficiary_city']);
+                        $fxPostArray['benef_bank_swift_code']= $fxPostArray['bic_swift'];
+                        unset($fxPostArray['bic_swift']);
+                        unset($fxPostArray['beneficiary_first_name']);
+                        unset($fxPostArray['beneficiary_last_name']);
+                        unset($fxPostArray['payment_types[]']);
+                        $response = $r1Service->createBeneficiary($fxPostArray);               
+                        $this->get('log')->execute($param, $type, $response);
+                        $extrasArray = $response->getExtras();
+                         if(isset($extrasArray['raw'])){
+                             $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
+                             if($xmlOutputArray->status == 'SUCCESS'){
+                                    $benificieryMapping->setEmail($param['username']);
+                                    $benificieryMapping->setType('cloud');
+                                    $benificieryMapping->setCloudBenificieryId($cloudBenificieryId);
+                                    $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                                    $em = $this->getDoctrine()->getManager();
+                                    $em->persist($benificieryMapping);
+                                    $em->flush();
+
+                             }
+                             else
+                              {
+                                    $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
+                                    echo json_encode($errorResponse);
+                                    exit;
+                              }  
+                         }
+                        return $this->show($response->getForClient(), null, 200);
+                        
+                }
+                else
+                {
+                    $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on currency cloud', 'data' => '{}');
+                    echo json_encode($errorResponse);
+                    exit;
+                }
+            }
+            else if($beneficiary_type == 'dahab' || $beneficiary_type == 'remmit')
+            {
+                        $benificieryMapping = new BenficieryMapping();
+                        $fxPostArray=$param;
+                        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+                        $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
+                        $fxPostArray['benef_name']= $fxPostArray['name'];
+                        $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
+                        unset($fxPostArray['beneficiary_address']);
+                        $fxPostArray['city']= $fxPostArray['beneficiary_city'];
+                        unset($fxPostArray['beneficiary_city']);
+                        unset($fxPostArray['name']);
+                        unset($fxPostArray['beneficiary_first_name']);
+                        unset($fxPostArray['beneficiary_last_name']);
+                        $response = $r1Service->createBeneficiary($fxPostArray);               
+                        $this->get('log')->execute($param, $type, $response);
+                        $extrasArray = $response->getExtras();
+                         if(isset($extrasArray['raw'])){
+                             $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
+                             if($xmlOutputArray->status == 'SUCCESS'){
+                                    $benificieryMapping->setEmail($param['username']);
+                                    $benificieryMapping->setType($beneficiary_type);
+                                    $benificieryMapping->setCloudBenificieryId('');
+                                    $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                                    $em = $this->getDoctrine()->getManager();
+                                    $em->persist($benificieryMapping);
+                                    $em->flush();
+
+                             }
+                             else
+                              {
+                                    $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
+                                    echo json_encode($errorResponse);
+                                    exit;
+                              }  
+                         }
+                        return $this->show($response->getForClient(), null, 200);
+
+            }           
         }
         else
         {
-            $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on currency cloud', 'data' => '{}');
+            $errorResponse = array('status' => 'error', 'message' => 'Beneficiary Type is missing', 'data' => '{}');
             echo json_encode($errorResponse);
             exit;
-        }    
-        
+        }
+            
+
     }
     
    
