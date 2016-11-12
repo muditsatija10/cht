@@ -47,11 +47,17 @@ class BeneficiaryController extends BaseController
         $type = 'create-eneficiary';
         $param = $request->request->all();
         $beneficiary_type  = $param['beneficiary_type'];
+        $payout_option = $param['payout_option'];
+        if(isset($param['agent_value'])){
+            $agent_value = $param['agent_value'];
+            unset($param['agent_value']);
+        }
         unset($param['beneficiary_type']); 
-        if(!empty($beneficiary_type))
+        unset($param['payout_option']);
+        if(!empty($beneficiary_type) && !empty($payout_option))
         {
             $r1Service = $this->get('r1.remitter_service');
-            if($beneficiary_type == 'cloud')
+            if($beneficiary_type == 'cloud' && $payout_option == 'bank')
             {
                 $form = $this->createPostForm(createBeneficiaryType::class);
                 $form->handleRequest($request);
@@ -146,54 +152,77 @@ class BeneficiaryController extends BaseController
                     exit;
                 }
             }
-            else if($beneficiary_type == 'dahab' || $beneficiary_type == 'remmit')
+            else if(($beneficiary_type == 'dahab' || $beneficiary_type == 'remmit' )  && ($payout_option == 'cash' || $payout_option == 'wallet'))
             {
-                        $benificieryMapping = new BenficieryMapping();
-                        $fxPostArray=$param;
-                        $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
-                        $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
-                        $fxPostArray['benef_name']= $fxPostArray['name'];
-                        $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
-                        unset($fxPostArray['beneficiary_address']);
-                        $fxPostArray['city']= $fxPostArray['beneficiary_city'];
-                        unset($fxPostArray['beneficiary_city']);
-                        unset($fxPostArray['name']);
-                        unset($fxPostArray['beneficiary_first_name']);
-                        unset($fxPostArray['beneficiary_last_name']);
-                        $response = $r1Service->createBeneficiary($fxPostArray);               
-                        $this->get('log')->execute($param, $type, $response);
-                        $extrasArray = $response->getExtras();
-                         if(isset($extrasArray['raw'])){
-                             $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
-                             if($xmlOutputArray->status == 'SUCCESS'){
-                                    $benificieryMapping->setEmail($param['username']);
-                                    $benificieryMapping->setType($beneficiary_type);
-                                    $benificieryMapping->setCloudBenificieryId('');
-                                    $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
-                                    $em = $this->getDoctrine()->getManager();
-                                    $em->persist($benificieryMapping);
-                                    $em->flush();
+                        $agentStatus =  $this->searchAgentValueInArray($agent_value);
+                        if($agentStatus)
+                        {
+                                $benificieryMapping = new BenficieryMapping();
+                                $fxPostArray=$param;
+                                $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
+                                $fxPostArray['lname']= $fxPostArray['beneficiary_last_name'];
+                                $fxPostArray['benef_name']= $fxPostArray['name'];
+                                $fxPostArray['address1']= $fxPostArray['beneficiary_address'];
+                                unset($fxPostArray['beneficiary_address']);
+                                $fxPostArray['city']= $fxPostArray['beneficiary_city'];
+                                unset($fxPostArray['beneficiary_city']);
+                                unset($fxPostArray['name']);
+                                unset($fxPostArray['beneficiary_first_name']);
+                                unset($fxPostArray['beneficiary_last_name']);
+                                $response = $r1Service->createBeneficiary($fxPostArray);               
+                                $this->get('log')->execute($param, $type, $response);
+                                $extrasArray = $response->getExtras();
+                                 if(isset($extrasArray['raw'])){
+                                     $xmlOutputArray =  simplexml_load_string($extrasArray['raw']);
+                                     if($xmlOutputArray->status == 'SUCCESS'){
+                                            $benificieryMapping->setEmail($param['username']);
+                                            $benificieryMapping->setType($beneficiary_type);
+                                            $benificieryMapping->setCloudBenificieryId('');
+                                            $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                                            $em = $this->getDoctrine()->getManager();
+                                            $em->persist($benificieryMapping);
+                                            $em->flush();
 
-                             }
-                             else
-                              {
-                                    $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
-                                    echo json_encode($errorResponse);
-                                    exit;
-                              }  
-                         }
-                        return $this->show($response->getForClient(), null, 200);
-
+                                     }
+                                     else
+                                      {
+                                            $errorResponse = array('status' => 'error', 'message' => 'Problem with adding benificiery on remmit', 'data' => '{}');
+                                            echo json_encode($errorResponse);
+                                            exit;
+                                      }  
+                                 }
+                                return $this->show($response->getForClient(), null, 200);
+                        }
+                        else
+                        {
+                            $errorResponse = array('status' => 'error', 'message' => 'You can send money via bank account', 'data' => '{}');
+                            echo json_encode($errorResponse);
+                            exit;
+                        }
             }           
         }
         else
         {
-            $errorResponse = array('status' => 'error', 'message' => 'Beneficiary Type is missing', 'data' => '{}');
+            $errorResponse = array('status' => 'error', 'message' => 'Beneficiary Type or Payout Option is missing', 'data' => '{}');
             echo json_encode($errorResponse);
             exit;
         }
             
 
+    }
+
+
+
+    private function searchAgentValueInArray($search_text)
+    {
+        $search_text = strtoupper($search_text);
+        $array = array('MELBOURNE HEAD OFFICE', 'SYDNEY-HEAD OFFICE', 'VIENNA');
+            foreach ($array as $filename) {
+                if (strpos($filename,$search_text) !== false) {
+                     return true;
+                }
+            }
+       
     }
     
    
