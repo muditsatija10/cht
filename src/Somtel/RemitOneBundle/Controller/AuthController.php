@@ -496,4 +496,26 @@ class AuthController extends BaseController
 
     }    
 
+
+
+     /**
+     * get remitter Transation UI info
+     *
+     * @Post("/remitter/getUISettings")
+     *
+     */
+
+    public function postGetUISettingsAction(Request $request)
+    {
+        $type = 'get-transactionUI';
+        $param = $request->request->all();
+        $r1Service = $this->get('r1.remitter_service');
+
+
+        $response = $r1Service->getTransactionUISettings($param);
+        $this->get('log')->execute($param, $type, $response);
+
+        return $this->show($response->getForClient(), null, 200);
+    }
+
 }

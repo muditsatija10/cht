@@ -38,6 +38,14 @@ class BenficieryMapping
     private $type;
 
 
+    /**
+     * @ORM\Column(type="string", length=15)
+     */
+    private $agent;
+
+
+
+   
 
     /**
      * Get id
@@ -143,5 +151,29 @@ class BenficieryMapping
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set agent
+     *
+     * @param string $agent
+     *
+     * @return BenficieryMapping
+     */
+    public function setAgent($agent)
+    {
+        $this->agent = $agent;
+
+        return $this;
+    }
+
+    /**
+     * Get agent
+     *
+     * @return string
+     */
+    public function getAgent()
+    {
+        return $this->agent;
     }
 }

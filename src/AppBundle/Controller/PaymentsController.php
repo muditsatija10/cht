@@ -84,19 +84,20 @@ class PaymentsController extends BaseController
      */
     public function postPaymentAction(Request $request)
     {
+
         $form = $this->createPostForm(CreatePaymentType::class);
 
-        $payload = ResponsePayloadFactory::newInstance();
+       //$payload = ResponsePayloadFactory::newInstance();
 
         $form->handleRequest($request);
-        if (!$form->isValid()) {
+        /*if (!$form->isValid()) {
             return $this->show($form, null, 400);
-        }
+        }*/
 
         $formData = $form->getData();
 
         // check if card can be used by this user
-        if (isset($formData["card_token_id"])) {
+        /*if (isset($formData["card_token_id"])) {
             if (!$this->isGranted(CardTokenVoter::VIEW, $formData['card_token_id'])) {
                 $payload->setStatus(PayloadStatus::FAILURE);
                 $payload->setOutput('Wrong card token');
@@ -108,12 +109,12 @@ class PaymentsController extends BaseController
             $payload->setStatus(PayloadStatus::FAILURE);
             $payload->setOutput('Need additional verification or annual limits exceeded');
             return $this->show($payload->getForClient(), null, 400);
-        }
+        }*/
 
 
         $parameters = $request->request->all();
         $parameters["payment_token"] = $request->get('card_token_id');
-
+       
         $r1Service = $this->get('r1.remitter_service');
 
         $newTransaction = $r1Service->createTransaction($parameters);
@@ -141,12 +142,14 @@ class PaymentsController extends BaseController
             $confirmedTransaction->getOutput()["reference_number"],
             $formData['card_token_id']
         );
+        print_r($transaction);
+        die;
 
-        if (!$transaction) {
+       /* if (!$transaction) {
             $payload->setStatus(PayloadStatus::FAILURE);
             $payload->setOutput('Can\'t create transaction');
             return $this->show($payload->getForClient(), null, 400);
-        }
+        }*/
 
         $formData += [
             'transactionId' => $transaction->getId(),
@@ -158,11 +161,11 @@ class PaymentsController extends BaseController
 
         $this->get('app.producer.payment')->put($job);
 
-        $payload->setStatus(PayloadStatus::SUCCESS);
+        /*$payload->setStatus(PayloadStatus::SUCCESS);
         $payload->setOutput([
             "id" => $transaction->getId(),
             "reference" => $transaction->getReference(),
         ]);
-        return $this->show($payload, [], Codes::HTTP_CREATED);
+        return $this->show($payload, [], Codes::HTTP_CREATED);*/
     }
 }

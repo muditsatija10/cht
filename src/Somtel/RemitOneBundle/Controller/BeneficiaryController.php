@@ -130,9 +130,15 @@ class BeneficiaryController extends BaseController
                                     $benificieryMapping->setType('cloud');
                                     $benificieryMapping->setCloudBenificieryId($cloudBenificieryId);
                                     $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                                    $benificieryMapping->setAgent('');
                                     $em = $this->getDoctrine()->getManager();
                                     $em->persist($benificieryMapping);
                                     $em->flush();
+                                    $benificiery_id  = $xmlOutputArray->new_beneficiary_id;
+
+                                    $responseArray = array("status" => "success", "message" => "Success Response", "data" => array('beneficiary_id' => $benificiery_id));
+                                    echo json_encode($responseArray);
+                                    exit;
 
                              }
                              else
@@ -142,7 +148,7 @@ class BeneficiaryController extends BaseController
                                     exit;
                               }  
                          }
-                        return $this->show($response->getForClient(), null, 200);
+                   
                         
                 }
                 else
@@ -154,9 +160,9 @@ class BeneficiaryController extends BaseController
             }
             else if(($beneficiary_type == 'dahab' || $beneficiary_type == 'remmit' )  && ($payout_option == 'cash' || $payout_option == 'wallet'))
             {
-                        $agentStatus =  $this->searchAgentValueInArray($agent_value);
+                        /*$agentStatus =  $this->searchAgentValueInArray($agent_value);
                         if($agentStatus)
-                        {
+                        {*/
                                 $benificieryMapping = new BenficieryMapping();
                                 $fxPostArray=$param;
                                 $fxPostArray['fname']= $fxPostArray['beneficiary_first_name'];
@@ -179,9 +185,14 @@ class BeneficiaryController extends BaseController
                                             $benificieryMapping->setType($beneficiary_type);
                                             $benificieryMapping->setCloudBenificieryId('');
                                             $benificieryMapping->setRemmitBenificieryId($xmlOutputArray->new_beneficiary_id);
+                                            $benificieryMapping->setAgent($agent_value);
                                             $em = $this->getDoctrine()->getManager();
                                             $em->persist($benificieryMapping);
                                             $em->flush();
+                                            $benificiery_id  = $xmlOutputArray->new_beneficiary_id;
+                                            $responseArray = array("status" => "success", "message" => "Success Response", "data" => array('beneficiary_id' => $benificiery_id));
+                                            echo json_encode($responseArray);
+                                            exit;
 
                                      }
                                      else
@@ -191,14 +202,13 @@ class BeneficiaryController extends BaseController
                                             exit;
                                       }  
                                  }
-                                return $this->show($response->getForClient(), null, 200);
-                        }
+                        /*}
                         else
                         {
                             $errorResponse = array('status' => 'error', 'message' => 'You can send money via bank account', 'data' => '{}');
                             echo json_encode($errorResponse);
                             exit;
-                        }
+                        }*/
             }           
         }
         else
@@ -216,7 +226,7 @@ class BeneficiaryController extends BaseController
     private function searchAgentValueInArray($search_text)
     {
         $search_text = strtoupper($search_text);
-        $array = array('MELBOURNE HEAD OFFICE', 'SYDNEY-HEAD OFFICE', 'VIENNA');
+        $array = array('MELBOURNE HEAD OFFICE', 'SYDNEY-HEAD OFFICE', 'VIENNA', 'ZANJ EXCHANGE', 'BELGIUM', 'Canada', 'CONGO', 'DENMARK', 'Copenhagen Safari Shop', 'Copenhagen Safari Shop', 'EGYPT -UBE', 'EGYPT -UBE', 'DIRE DAWA', 'DEBUB GLOBAL', 'COMMERCIAL BANK OF ETHIOPIA', 'Abbysinia Bank', 'BUNA BANK', 'BUNA BANK', 'ADDIS BANK', 'ADDIS ABABA', 'JIGJIGA', 'HELSENKI', 'France', 'BANJUL', 'KAIRABA AVENUE' , 'AFLAO,VOLTA', 'DUBLIN');
             foreach ($array as $filename) {
                 if (strpos($filename,$search_text) !== false) {
                      return true;
