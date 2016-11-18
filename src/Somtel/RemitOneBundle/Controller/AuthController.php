@@ -443,19 +443,21 @@ class AuthController extends BaseController
                 $formData = $form->getData();
                 $paramValArray = $param;
                 unset($formData['password']);
+                $emailArray = explode('@', $paramValArray['email']);
+                $emailIndexVal = substr($emailArray[0],0,4);
 
                 $formData +=[
-                "name" => $paramValArray['name'],
-                "fname" => $paramValArray['fname'],
-                "lname" => $paramValArray['lname'],
+                "name" => $emailIndexVal,
+                "fname" => $emailIndexVal,
+                "lname" => $emailIndexVal,
                 "address1" => 'Street1',
                 "country_id" => '02',
-                "dob" =>  $paramValArray['dob'],
-                "telephone" => '+1'.$paramValArray['telephone'],
+                "dob" =>  $this->getRandomDob(),
+                "telephone" => '+1'.$this->getRandomTelephone(),
                 "password" => $socialPassword,
                 "verify_password" => $socialPassword,
-                "id1_type" => $paramValArray['name'],
-                "id1_details" => 'talkremmit'.$paramValArray['name'],
+                "id1_type" => $this->getRandomIdType(),
+                "id1_details" => 'talkremmit'.$emailIndexVal,
                 "id1_expiry" => $this->getRandomExpiryDate(),
                 "id1_scan" => $base64Img,
                 "postcode" => mt_rand(100000, 999999),
