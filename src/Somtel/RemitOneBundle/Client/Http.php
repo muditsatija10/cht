@@ -336,5 +336,10 @@ class Http implements Interfaces\Client\Http
     {
         return $this->post('remitterUser/getProfile', $request);
     }
+
+    public function getCollectionPoints($request)
+    {
+        return $this->post('transaction/getCollectionPoints', $request);
+    }
     
 }

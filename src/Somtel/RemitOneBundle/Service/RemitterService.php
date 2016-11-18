@@ -255,4 +255,10 @@ class RemitterService
 
         return $output['transfer_types']['transfer_type'];
     }
+
+     public function getCollectionPoints($request)
+    {
+        $response = $this->httpClient->getCollectionPoints($request);
+        return $response;
+    }
 }

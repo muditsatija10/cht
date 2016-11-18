@@ -518,4 +518,25 @@ class AuthController extends BaseController
         return $this->show($response->getForClient(), null, 200);
     }
 
+
+    /**
+     * get remitter Collection Point info
+     *
+     * @Post("/remitter/getCollectionPoints")
+     *
+     */
+
+    public function postGetCollectionPointsAction(Request $request)
+    {
+        $type = 'get-collection-points';
+        $param = $request->request->all();
+        $r1Service = $this->get('r1.remitter_service');
+
+
+        $response = $r1Service->getCollectionPoints($param);
+        $this->get('log')->execute($param, $type, $response);
+
+        return $this->show($response->getForClient(), null, 200);
+    }
+
 }
