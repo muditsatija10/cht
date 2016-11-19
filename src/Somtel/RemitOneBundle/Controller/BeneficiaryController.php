@@ -101,9 +101,10 @@ class BeneficiaryController extends BaseController
                 $fxAPIUrl = 'https://devapi.thecurrencycloud.com/v2/beneficiaries/create';
                 $retunFxVal = $this->initiateCrossDomainRequest($fxAPIUrl, $currencyCloudArray, 'POST', true, $headers);
                 $returnCloudBenificieryArray  = json_decode($retunFxVal, true);
-                $cloudBenificieryId = $returnCloudBenificieryArray['id'];
-                if(!empty($cloudBenificieryId))
+                
+                if(isset($returnCloudBenificieryArray['id']))
                 {
+                        $cloudBenificieryId = $returnCloudBenificieryArray['id'];
                         $benificieryMapping = new BenficieryMapping();
                         $fxPostArray=$param;
                         $fxPostArray['payment_types[]']=$param['payment_types[]'];
